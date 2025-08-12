@@ -37,8 +37,13 @@ base-pptx:
 
 base-html:
 	@echo "🚀 Building base HTML..."
+	@echo "🔍 Debug: HTML_TEMPLATE = $(HTML_TEMPLATE)"
+	@echo "🔍 Debug: CURDIR = $(CURDIR)"
+	@echo "🔍 Debug: Checking if template exists..."
+	@ls -la "$(HTML_TEMPLATE)" || echo "❌ Template file not found!"
+
 	@mkdir -p $(BUILD_DIR)
-	@sed 's/^---$$/#/' $(MAIN_FILE) | pandoc --from markdown --to html -o $(BASE_HTML) --template="./template-html-with-notes-v2.html" --data-dir="../scripts" --slide-level=1
+	@sed 's/^---$$/#/' $(MAIN_FILE) | pandoc --from markdown --to html -o $(BASE_HTML) --template="/template-html-with-notes-v2.html" --data-dir="../scripts" --slide-level=1
 	@echo "✅ Base HTML saved to $(BASE_HTML)"
 
 # Speaker version targets
