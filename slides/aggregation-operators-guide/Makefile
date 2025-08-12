@@ -9,7 +9,7 @@ BUILD_DIR = ../build/$(PRESENTATION_NAME)
 
 # Pandoc slide processing scripts
 MERGE_NOTES_SCRIPT = ../scripts/merge-notes-for-pandoc-v2.py
-HTML_TEMPLATE = ../scripts/template-html-with-notes-v2.html
+HTML_TEMPLATE = $(shell pwd)/../scripts/template-html-with-notes-v2.html
 
 # Output files
 BASE_PPTX = $(BUILD_DIR)/$(PRESENTATION_NAME).pptx

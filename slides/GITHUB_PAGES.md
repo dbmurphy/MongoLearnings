@@ -142,6 +142,8 @@ make github-pages
 
 **Note**: Make sure you're in the `slides/` directory when running these commands.
 
+**Template Path Issue**: If you encounter "Could not find data file" errors with Pandoc templates, this has been fixed by using absolute paths in the Makefiles. The template path is now correctly resolved using `$(shell pwd)/../scripts/template-html-with-notes-v2.html`.
+
 ### Deployment Issues
 - Ensure the `docs/` directory is committed to git
 - Check GitHub Actions logs if using automatic deployment

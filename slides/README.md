@@ -144,6 +144,7 @@ build/mongodb-indexing-field-guide/
 - **Python 3**: Custom scripts for merging notes and content processing
 - **Make**: Build automation and dependency management
 - **Custom HTML Templates**: Responsive presentation templates with slide navigation
+- **Template System**: Consistent guide creation with Pandoc-based build system
 
 ### Key Features
 - **Presenter Notes**: Speaker and published notes appear in PowerPoint's presenter notes section

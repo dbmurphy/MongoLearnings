@@ -180,4 +180,20 @@ Extend the Makefile for custom formats or deployment targets.
 
 ---
 
-**This template system ensures consistency across all presentation guides while providing flexibility for diverse content types.** 
+**This template system ensures consistency across all presentation guides while providing flexibility for diverse content types.**
+
+## 🎯 Build System
+
+The template uses **Pandoc** for building presentations, which provides:
+
+- **Base, speaker, and published versions** - Three different output formats
+- **Custom HTML templates** - Responsive presentations with expandable notes
+- **PPTX output** - PowerPoint files with presenter notes
+- **GitHub Pages integration** - Automatic deployment support
+- **Advanced features** - Better slide processing and note merging
+
+### Key Features
+- **Presenter Notes**: Speaker and published notes appear in PowerPoint's presenter notes section
+- **Interactive HTML**: Slide navigation with expandable notes sections
+- **Cross-Platform**: Works on macOS, Linux, and Windows
+- **Automated Builds**: Single command builds all guides in all formats 

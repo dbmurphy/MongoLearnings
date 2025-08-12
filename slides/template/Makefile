@@ -1,121 +1,100 @@
 # Makefile for {{GUIDE_TITLE}}
-# Builds presentation in multiple formats using MARP
+# Builds presentation in multiple formats using Pandoc
 
 PRESENTATION_NAME = {{GUIDE_NAME}}
 MAIN_FILE = $(PRESENTATION_NAME).md
 SPEAKER_FILE = speaker.md
 PUBLISHED_FILE = published.md
 BUILD_DIR = ../build/$(PRESENTATION_NAME)
-MERGE_SCRIPT = ../scripts/merge-presentation.py
-BUILD_SCRIPT = ../scripts/build-slides.sh
 
-# Default output format (can be overridden with TYPE=html or TYPE=pdf)
-TYPE ?= pptx
+# Pandoc slide processing scripts
+MERGE_NOTES_SCRIPT = ../scripts/merge-notes-for-pandoc-v2.py
+HTML_TEMPLATE = $(shell pwd)/../scripts/template-html-with-notes-v2.html
 
-# Default target
+# Output files
+BASE_PPTX = $(BUILD_DIR)/$(PRESENTATION_NAME).pptx
+BASE_HTML = $(BUILD_DIR)/$(PRESENTATION_NAME).html
+SPEAKER_PPTX = $(BUILD_DIR)/$(PRESENTATION_NAME)-speaker.pptx
+SPEAKER_HTML = $(BUILD_DIR)/$(PRESENTATION_NAME)-speaker.html
+PUBLISHED_PPTX = $(BUILD_DIR)/$(PRESENTATION_NAME)-published.pptx
+PUBLISHED_HTML = $(BUILD_DIR)/$(PRESENTATION_NAME)-published.html
+
+# Default target - builds all 6 outputs
 .PHONY: all
-all: build
+all: base speaker published
+	@echo "🎉 All 6 outputs built successfully!"
 
-# Build targets
-.PHONY: build build-html build-pdf build-pptx
-build:
-	@echo "🚀 Building $(PRESENTATION_NAME) as $(TYPE)..."
-	@$(BUILD_SCRIPT) $(PRESENTATION_NAME) $(BUILD_DIR) $(TYPE)
+# Base version targets
+.PHONY: base base-pptx base-html
+base: base-pptx base-html
+	@echo "✅ Base version complete!"
 
-# Explicit format targets (for convenience)
-build-html:
-	@$(MAKE) build TYPE=html
-
-build-pdf:
-	@$(MAKE) build TYPE=pdf
-
-build-pptx:
-	@$(MAKE) build TYPE=pptx
-
-# Speaker mode targets
-.PHONY: speaker speaker-html speaker-pdf speaker-pptx
-speaker:
-	@echo "🎤 Building speaker version as $(TYPE)..."
+base-pptx:
+	@echo "🚀 Building base PPTX..."
 	@mkdir -p $(BUILD_DIR)
-	@echo "📝 Creating merged speaker presentation..."
-	python3 $(MERGE_SCRIPT) $(PRESENTATION_NAME) speaker $(BUILD_DIR)/$(PRESENTATION_NAME)-speaker.md
-	@echo "🎯 Building $(TYPE) from merged presentation..."
-	npx marp $(BUILD_DIR)/$(PRESENTATION_NAME)-speaker.md --$(TYPE) --output $(BUILD_DIR)/$(PRESENTATION_NAME)-speaker.$(TYPE)
+	@sed 's/^---$$/##/' $(MAIN_FILE) | pandoc --from markdown --to pptx -o $(BASE_PPTX) --slide-level=1
+	@echo "✅ Base PPTX saved to $(BASE_PPTX)"
 
-# Explicit speaker format targets (for convenience)
-speaker-html:
-	@$(MAKE) speaker TYPE=html
+base-html:
+	@echo "🚀 Building base HTML..."
+	@mkdir -p $(BUILD_DIR)
+	@sed 's/^---$$/#/' $(MAIN_FILE) | pandoc --from markdown --to html -o $(BASE_HTML) --template=$(HTML_TEMPLATE) --slide-level=1
+	@echo "✅ Base HTML saved to $(BASE_HTML)"
 
-speaker-pdf:
-	@$(MAKE) speaker TYPE=pdf
+# Speaker version targets
+.PHONY: speaker speaker-pptx speaker-html
+speaker: speaker-pptx speaker-html
+	@echo "✅ Speaker version complete!"
 
 speaker-pptx:
-	@$(MAKE) speaker TYPE=pptx
-
-# Legacy targets for compatibility
-build-speaker: speaker
-build-speaker-html: speaker-html
-build-speaker-pdf: speaker-pdf
-build-speaker-pptx: speaker-pptx
-
-# Published mode targets
-.PHONY: published published-html published-pdf published-pptx
-published:
-	@echo "📖 Building published version as $(TYPE)..."
+	@echo "🎤 Building speaker PPTX..."
 	@mkdir -p $(BUILD_DIR)
-	@echo "📝 Creating merged published presentation..."
-	python3 $(MERGE_SCRIPT) $(PRESENTATION_NAME) published $(BUILD_DIR)/$(PRESENTATION_NAME)-published.md
-	@echo "🎯 Building $(TYPE) from merged presentation..."
-	npx marp $(BUILD_DIR)/$(PRESENTATION_NAME)-published.md --$(TYPE) --output $(BUILD_DIR)/$(PRESENTATION_NAME)-published.$(TYPE)
+	@python3 $(MERGE_NOTES_SCRIPT) $(MAIN_FILE) $(SPEAKER_FILE) $(BUILD_DIR)/$(PRESENTATION_NAME)-speaker.md --notes-type=Speaker
+	@sed 's/^---$$/##/' $(BUILD_DIR)/$(PRESENTATION_NAME)-speaker.md | pandoc --from markdown --to pptx -o $(SPEAKER_PPTX) --slide-level=1
+	@echo "✅ Speaker PPTX saved to $(SPEAKER_PPTX)"
 
-# Explicit published format targets (for convenience)
-published-html:
-	@$(MAKE) published TYPE=html
+speaker-html:
+	@echo "🎤 Building speaker HTML..."
+	@mkdir -p $(BUILD_DIR)
+	@python3 $(MERGE_NOTES_SCRIPT) $(MAIN_FILE) $(SPEAKER_FILE) $(BUILD_DIR)/$(PRESENTATION_NAME)-speaker.md --notes-type=Speaker
+	@pandoc --from markdown --to html -o $(SPEAKER_HTML) --template=$(HTML_TEMPLATE) $(BUILD_DIR)/$(PRESENTATION_NAME)-speaker.md
+	@echo "✅ Speaker HTML saved to $(SPEAKER_HTML)"
 
-published-pdf:
-	@$(MAKE) published TYPE=pdf
+# Published version targets
+.PHONY: published published-pptx published-html
+published: published-pptx published-html
+	@echo "✅ Published version complete!"
 
 published-pptx:
-	@$(MAKE) published TYPE=pptx
+	@echo "📖 Building published PPTX..."
+	@mkdir -p $(BUILD_DIR)
+	@python3 $(MERGE_NOTES_SCRIPT) $(MAIN_FILE) $(PUBLISHED_FILE) $(BUILD_DIR)/$(PRESENTATION_NAME)-published.md --notes-type=Published
+	@sed 's/^---$$/##/' $(BUILD_DIR)/$(PRESENTATION_NAME)-published.md | pandoc --from markdown --to pptx -o $(PUBLISHED_PPTX) --slide-level=1
+	@echo "✅ Published PPTX saved to $(PUBLISHED_PPTX)"
 
-# Legacy targets for compatibility
-build-published: published
-build-published-html: published-html
-build-published-pdf: published-pdf
-build-published-pptx: published-pptx
+published-html:
+	@echo "📖 Building published HTML..."
+	@mkdir -p $(BUILD_DIR)
+	@python3 $(MERGE_NOTES_SCRIPT) $(MAIN_FILE) $(PUBLISHED_FILE) $(BUILD_DIR)/$(PRESENTATION_NAME)-published.md --notes-type=Published
+	@pandoc --from markdown --to html -o $(PUBLISHED_HTML) --template=$(HTML_TEMPLATE) $(BUILD_DIR)/$(PRESENTATION_NAME)-published.md
+	@echo "✅ Published HTML saved to $(PUBLISHED_HTML)"
 
 # Development targets
-.PHONY: dev dev-speaker dev-published watch preview
-dev:
-	@$(MAKE) build TYPE=html
-	@echo "🚀 Opening $(BUILD_DIR)/$(PRESENTATION_NAME).html in browser..."
-	open $(BUILD_DIR)/$(PRESENTATION_NAME).html
+.PHONY: dev dev-speaker dev-published
+dev: base-html
+	@echo "🚀 Opening base HTML in browser..."
+	open $(BASE_HTML)
 
-dev-speaker:
-	@$(MAKE) speaker TYPE=html
-	@echo "🚀 Opening $(BUILD_DIR)/$(PRESENTATION_NAME)-speaker.html in browser..."
-	open $(BUILD_DIR)/$(PRESENTATION_NAME)-speaker.html
+dev-speaker: speaker-html
+	@echo "🚀 Opening speaker HTML in browser..."
+	open $(SPEAKER_HTML)
 
-dev-published:
-	@$(MAKE) published TYPE=html
-	@echo "🚀 Opening $(BUILD_DIR)/$(PRESENTATION_NAME)-published.html in browser..."
-	open $(BUILD_DIR)/$(PRESENTATION_NAME)-published.html
-
-watch:
-	@echo "👀 Watching for changes and rebuilding..."
-	@mkdir -p $(BUILD_DIR)
-	npx marp --watch $(MAIN_FILE) --html --output $(BUILD_DIR)/$(PRESENTATION_NAME).html
-
-preview:
-	@echo "👁️  Starting preview server..."
-	npx marp --preview $(MAIN_FILE)
+dev-published: published-html
+	@echo "🚀 Opening published HTML in browser..."
+	open $(PUBLISHED_HTML)
 
 # Utility targets
-.PHONY: install clean stats validate-slides
-install:
-	@echo "📦 Installing dependencies..."
-	npm install
-
+.PHONY: clean stats validate-slides help
 clean:
 	@echo "🧹 Cleaning generated files..."
 	rm -rf $(BUILD_DIR)
@@ -129,48 +108,43 @@ stats:
 		echo "   Speaker notes: $$(wc -c < $(SPEAKER_FILE) | tr -d ' ') characters"; \
 	fi
 	@if [ -f $(PUBLISHED_FILE) ]; then \
-		echo "   Published content: $$(wc -c < $(PUBLISHED_FILE) | tr -d ' ') characters"; \
+		echo "   Published notes: $$(wc -c < $(PUBLISHED_FILE) | tr -d ' ') characters"; \
 	fi
 
 validate-slides:
-	@echo "✅ Validating slide structure..."
-	@mkdir -p $(BUILD_DIR)
-	@echo "📝 Testing speaker merge..."
-	@python3 $(MERGE_SCRIPT) $(PRESENTATION_NAME) speaker $(BUILD_DIR)/$(PRESENTATION_NAME)-speaker.md > /dev/null
-	@echo "📝 Testing published merge..."
-	@python3 $(MERGE_SCRIPT) $(PRESENTATION_NAME) published $(BUILD_DIR)/$(PRESENTATION_NAME)-published.md > /dev/null
-	@echo "✅ All slide validations passed!"
+	@echo "🔍 Validating slide structure..."
+	@if [ ! -f $(MAIN_FILE) ]; then \
+		echo "❌ Main file $(MAIN_FILE) not found!"; \
+		exit 1; \
+	fi
+	@echo "✅ Main file exists"
+	@if [ ! -f $(SPEAKER_FILE) ]; then \
+		echo "⚠️  Speaker file $(SPEAKER_FILE) not found"; \
+	else \
+		echo "✅ Speaker file exists"; \
+	fi
+	@if [ ! -f $(PUBLISHED_FILE) ]; then \
+		echo "⚠️  Published file $(PUBLISHED_FILE) not found"; \
+	else \
+		echo "✅ Published file exists"; \
+	fi
 
 help:
-	@echo "{{GUIDE_TITLE}} Build System"
+	@echo "🚀 {{GUIDE_TITLE}} - Build System"
 	@echo ""
-	@echo "🎯 Primary targets (default: TYPE=pptx):"
-	@echo "  build                  - Build presentation (default: pptx)"
-	@echo "  speaker                - Build speaker version (default: pptx)"
-	@echo "  published              - Build published version (default: pptx)"
+	@echo "Available targets:"
+	@echo "  all          - Build all 6 outputs (base, speaker, published)"
+	@echo "  base         - Build base version (PPTX + HTML)"
+	@echo "  speaker      - Build speaker version (PPTX + HTML)"
+	@echo "  published    - Build published version (PPTX + HTML)"
 	@echo ""
-	@echo "🔧 Format control:"
-	@echo "  TYPE=html              - Override to HTML format"
-	@echo "  TYPE=pdf               - Override to PDF format"
-	@echo "  TYPE=pptx              - Explicit PowerPoint format"
+	@echo "Development:"
+	@echo "  dev          - Build and open base HTML"
+	@echo "  dev-speaker  - Build and open speaker HTML"
+	@echo "  dev-published - Build and open published HTML"
 	@echo ""
-	@echo "📋 Examples:"
-	@echo "  make build             - Build PowerPoint presentation"
-	@echo "  make build TYPE=html   - Build HTML presentation"
-	@echo "  make speaker           - Build speaker PowerPoint"
-	@echo "  make speaker TYPE=pdf  - Build speaker PDF"
-	@echo "  make published TYPE=html - Build published HTML"
-	@echo ""
-	@echo "🚀 Development targets:"
-	@echo "  dev                    - Build HTML and open in browser"
-	@echo "  dev-speaker            - Build speaker HTML and open"
-	@echo "  dev-published          - Build published HTML and open"
-	@echo "  watch                  - Watch for changes and rebuild"
-	@echo "  preview                - Start MARP preview server"
-	@echo ""
-	@echo "🛠️ Utility targets:"
-	@echo "  install                - Install dependencies"
-	@echo "  clean                  - Remove build directory"
-	@echo "  stats                  - Show presentation statistics"
-	@echo "  validate-slides        - Validate slide structure"
-	@echo "  help                   - Show this help" 
+	@echo "Utilities:"
+	@echo "  clean        - Remove all generated files"
+	@echo "  stats        - Show presentation statistics"
+	@echo "  validate-slides - Validate slide structure"
+	@echo "  help         - Show this help message"
