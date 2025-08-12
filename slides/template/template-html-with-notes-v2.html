@@ -276,7 +276,15 @@
                     notesContent.className = 'notes-content';
                     
                     const notesTitle = document.createElement('h4');
-                    notesTitle.textContent = 'Speaker Notes';
+                    // Detect notes type based on filename
+                    const filename = window.location.pathname.split('/').pop();
+                    if (filename && filename.includes('published')) {
+                        notesTitle.textContent = 'Published Notes';
+                    } else if (filename && filename.includes('speaker')) {
+                        notesTitle.textContent = 'Speaker Notes';
+                    } else {
+                        notesTitle.textContent = 'Notes';
+                    }
                     
                     notesContent.appendChild(notesTitle);
                     notesContent.appendChild(notesBlock.cloneNode(true));
