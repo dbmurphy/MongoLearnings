@@ -70,12 +70,11 @@ db.sales.aggregate([
 ])
 
 // Each operator type has different performance characteristics!
+```
 
 ---
 
 # 🏗️ Aggregation Pipeline Architecture Deep Dive (Part 2)
-
-```
 
 ---
 # ⚡ Core Performance Principles by Operator Type
@@ -93,12 +92,11 @@ db.sales.aggregate([
 { $limit: 100 }            // Stops after N documents
 { $skip: 50 }              // Skips N documents
 { $replaceRoot: { ... } }  // Transforms document structure
+```
 
 ---
 
 # ⚡ Core Performance Principles by Operator Type (Part 2)
-
-```
 
 ### 🔒 **Blocking Operations** (Memory-Intensive)
 ```javascript
@@ -130,12 +128,11 @@ db.sales.aggregate([
 }}
 
 // Performance: Index scan of ~1000 docs instead of collection scan of 10M
+```
 
 ---
 
 # 🔍 $match: The Performance Foundation (Part 1)
-
-```
 
 ### ❌ Complex Expression Anti-Patterns
 ```javascript
