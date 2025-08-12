@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #1e1e1e;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+        
+        .slide {
+            min-height: 100vh;
+            padding: 40px;
+            box-sizing: border-box;
+            position: relative;
+        }
+        
+        .slide-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 0.5em;
+            color: #61dafb;
+        }
+        
+        h2 {
+            font-size: 2em;
+            margin-bottom: 0.5em;
+            color: #61dafb;
+        }
+        
+        h3 {
+            font-size: 1.5em;
+            margin-bottom: 0.5em;
+            color: #61dafb;
+        }
+        
+        p {
+            font-size: 1.2em;
+            margin-bottom: 1em;
+        }
+        
+        ul, ol {
+            font-size: 1.1em;
+            margin-bottom: 1em;
+        }
+        
+        li {
+            margin-bottom: 0.5em;
+        }
+        
+        code {
+            background: #2d2d2d;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', monospace;
+        }
+        
+        pre {
+            background: #2d2d2d;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        
+        pre code {
+            background: none;
+            padding: 0;
+        }
+        
+        /* Notes Section */
+        .notes-section {
+            margin-top: 30px;
+            border-top: 2px solid #61dafb;
+            padding-top: 20px;
+        }
+        
+        .notes-toggle {
+            background: #61dafb;
+            color: #1e1e1e;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .notes-toggle:hover {
+            background: #4fa8c5;
+        }
+        
+        .notes-content {
+            display: none;
+            background: #2d2d2d;
+            border: 1px solid #61dafb;
+            border-radius: 8px;
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        
+        .notes-content.show {
+            display: block;
+        }
+        
+        .notes-content h4 {
+            color: #61dafb;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        
+        /* Slide Navigation */
+        .slide-nav {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(30, 30, 30, 0.9);
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 1000;
+        }
+        
+        .slide-nav button {
+            background: #61dafb;
+            color: #1e1e1e;
+            border: none;
+            padding: 5px 10px;
+            margin: 0 2px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        
+        .slide-nav button:hover {
+            background: #4fa8c5;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .slide {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            h2 {
+                font-size: 1.5em;
+            }
+            
+            .slide-nav {
+                position: static;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-nav">
+        <button onclick="previousSlide()">←</button>
+        <span id="slide-counter">1</span>
+        <button onclick="nextSlide()">→</button>
+    </div>
+    
+    <div id="slides-container">
+        <h1 id="section"></h1>
+        <p>title: “MongoDB Indexing Field Guide” subtitle: “Performance
+        &amp; Query Optimization for Node.js Developers” author:
+        “Database Performance &amp; Query Optimization” date: “2024”
+        #</p>
+        <h1 id="mongodb-indexing-field-guide">📖 MongoDB Indexing Field
+        Guide</h1>
+        <h2
+        id="performance-query-optimization-for-node.js-developers">Performance
+        &amp; Query Optimization for Node.js Developers</h2>
+        <p><em>Understanding how indexes work and how the optimizer
+        evaluates your queries</em></p>
+        <h1 id="section-1"></h1>
+        <h1 id="about-this-session">👋 About This Session</h1>
+        <p><strong>Target Audience:</strong> Node.js &amp; Mongoose
+        developers (all levels)</p>
+        <p><strong>What You’ll Learn:</strong> - How MongoDB’s query
+        optimizer really works - Index types and when to use them -
+        Query patterns that help/hurt performance - Aggregation pipeline
+        optimization - Mongoose-specific indexing considerations -
+        Common pitfalls and how to avoid them</p>
+        <h1 id="section-2"></h1>
+        <h1 id="why-indexes-matter">🎯 Why Indexes Matter</h1>
+        <pre><code>// Without index: O(n) - scans entire collection
+db.users.find({ email: &quot;john@example.com&quot; })
+
+// With index: O(log n) - direct lookup
+db.users.createIndex({ email: 1 })
+db.users.find({ email: &quot;john@example.com&quot; })</code></pre>
+        <p><strong>Performance Impact:</strong> - 1M documents: ~1ms vs
+        ~1000ms - 10M documents: ~1ms vs ~10,000ms - Linear growth vs
+        logarithmic growth</p>
+        <h1 id="section-3"></h1>
+        <h1 id="mongodb-query-optimizer-overview">🧠 MongoDB Query
+        Optimizer Overview</h1>
+        <h2 id="the-three-stage-process">The Three-Stage Process</h2>
+        <ol type="1">
+        <li><strong>Query Parsing</strong> - Understands what you
+        want</li>
+        <li><strong>Plan Selection</strong> - Chooses how to get it</li>
+        <li><strong>Execution</strong> - Actually runs the query</li>
+        </ol>
+        <p>The optimizer is <strong>cost-based</strong> and
+        <strong>learned</strong> - it remembers what works!</p>
+        <h1 id="section-4"></h1>
+        <h1 id="query-optimizer-stage-1---parsing">🔍 Query Optimizer:
+        Stage 1 - Parsing</h1>
+        <pre><code>// Your query
+db.users.find({ 
+  status: &quot;active&quot;, 
+  age: { $gte: 25 }, 
+  city: &quot;New York&quot; 
+}).sort({ lastLogin: -1 })
+
+// Optimizer identifies:
+// - Filter fields: status, age, city
+// - Filter types: equality, range, equality  
+// - Sort fields: lastLogin (descending)
+// - Operation type: find</code></pre>
+        <h1 id="section-5"></h1>
+        <h1 id="query-optimizer-stage-1---parsing-field-usage-types">🔍
+        Query Optimizer: Stage 1 - Parsing (Field Usage Types)</h1>
+        <p><strong>Field Usage Types:</strong> -
+        <strong>Equality</strong>: <code>status: "active"</code> -
+        <strong>Range</strong>: <code>age: { $gte: 25 }</code> -
+        <strong>Sort</strong>: <code>sort({ lastLogin: -1 })</code></p>
+        <h1 id="section-6"></h1>
+        <h1 id="query-optimizer-stage-2---plan-selection">⚡ Query
+        Optimizer: Stage 2 - Plan Selection</h1>
+        <h2 id="index-candidate-evaluation">Index Candidate
+        Evaluation</h2>
+        <pre><code>// Available indexes:
+{ status: 1 }                    // Single field
+{ age: 1, status: 1 }           // Compound
+{ city: 1, lastLogin: -1 }      // Compound with sort
+{ status: 1, lastLogin: -1 }    // ESR pattern</code></pre>
+        <p><strong>Optimizer considers:</strong> - <strong>Field
+        coverage</strong> - Which fields can use index -
+        <strong>Selectivity</strong> - How much data gets filtered out -
+        <strong>Sort efficiency</strong> - Can index provide sort
+        order</p>
+        <h1 id="section-7"></h1>
+        <h1 id="the-esr-rule-equality-sort-range">🎯 The ESR Rule
+        (Equality, Sort, Range)</h1>
+        <h2 id="optimal-index-field-order">Optimal Index Field
+        Order</h2>
+        <pre><code>// Query pattern
+db.users.find({ 
+  status: &quot;active&quot;,        // Equality
+  age: { $gte: 25 }       // Range
+}).sort({ lastLogin: -1 }) // Sort
+
+// Optimal index: ESR order
+{ status: 1, lastLogin: -1, age: 1 }
+//   E          S            R</code></pre>
+        <p><strong>Why ESR works:</strong> 1. <strong>Equality</strong>
+        - Most selective, finds exact matches 2. <strong>Sort</strong> -
+        Provides sorted results without extra work 3.
+        <strong>Range</strong> - Filters remaining documents</p>
+        <h1 id="section-8"></h1>
+        <h1 id="index-types-deep-dive">📊 Index Types Deep Dive</h1>
+        <h2 id="single-field-indexes">Single Field Indexes</h2>
+        <pre><code>// Basic single field
+db.users.createIndex({ email: 1 })
+
+// Good for:
+db.users.find({ email: &quot;john@example.com&quot; })
+db.users.find({ email: { $in: [&quot;john@example.com&quot;, &quot;jane@example.com&quot;] } })
+
+// Direction matters for sorting:
+db.users.createIndex({ createdAt: -1 })  // Newest first</code></pre>
+        <h1 id="section-9"></h1>
+        <h1 id="compound-indexes">🔗 Compound Indexes</h1>
+        <pre><code>// Order matters!
+db.users.createIndex({ status: 1, age: 1, city: 1 })
+
+// Can efficiently support:
+{ status: &quot;active&quot; }
+{ status: &quot;active&quot;, age: 25 }
+{ status: &quot;active&quot;, age: 25, city: &quot;NYC&quot; }
+
+// Cannot efficiently support:
+{ age: 25 }                    // Skips first field
+{ city: &quot;NYC&quot; }               // Skips first fields
+{ age: 25, city: &quot;NYC&quot; }      // Skips first field</code></pre>
+        <p><strong>Left-to-Right Rule:</strong> Must use fields from
+        left to right</p>
+        <h1 id="section-10"></h1>
+        <h1 id="specialized-index-types">🎨 Specialized Index Types</h1>
+        <h2 id="text-indexes">Text Indexes</h2>
+        <pre><code>db.articles.createIndex({ title: &quot;text&quot;, content: &quot;text&quot; })
+db.articles.find({ $text: { $search: &quot;mongodb indexing&quot; } })</code></pre>
+        <h2 id="geospatial-indexes">Geospatial Indexes</h2>
+        <pre><code>db.places.createIndex({ location: &quot;2dsphere&quot; })
+db.places.find({ location: { $near: { $geometry: { type: &quot;Point&quot;, coordinates: [-73.97, 40.77] } } } })</code></pre>
+        <h2 id="partial-indexes">Partial Indexes</h2>
+        <pre><code>db.users.createIndex({ email: 1 }, { partialFilterExpression: { status: &quot;active&quot; } })</code></pre>
+        <h1 id="section-11"></h1>
+        <h1 id="aggregation-pipeline-optimization">🔄 Aggregation
+        Pipeline Optimization</h1>
+        <h2 id="pipeline-stages-and-indexes">Pipeline Stages and
+        Indexes</h2>
+        <pre><code>db.users.aggregate([
+  { $match: { status: &quot;active&quot;, age: { $gte: 25 } } },  // Can use index
+  { $sort: { lastLogin: -1 } },                         // Can use index
+  { $group: { _id: &quot;$department&quot;, count: { $sum: 1 } } }, // Creates new data
+  { $sort: { count: -1 } }                              // Needs in-memory sort
+])
+
+// Optimal index:
+{ status: 1, lastLogin: -1, age: 1 }</code></pre>
+        <p><strong>Key Principle:</strong> Early pipeline stages can use
+        indexes, later stages often can’t</p>
+        <h1 id="section-12"></h1>
+        <h1 id="aggregation-match-and-sort-optimization">📈 Aggregation:
+        $match and $sort Optimization</h1>
+        <pre><code>// GOOD: $match first, then $sort
+db.orders.aggregate([
+  { $match: { status: &quot;completed&quot;, date: { $gte: new Date(&quot;2024-01-01&quot;) } } },
+  { $sort: { amount: -1 } },
+  { $limit: 10 }
+])
+
+// Index: { status: 1, amount: -1, date: 1 }</code></pre>
+        <h1 id="section-13"></h1>
+        <h1 id="aggregation-match-and-sort-optimization-part-1">📈
+        Aggregation: $match and $sort Optimization (Part 1)</h1>
+        <pre><code>// BAD: $sort before selective $match
+db.orders.aggregate([
+  { $sort: { amount: -1 } },  // Sorts entire collection!
+  { $match: { status: &quot;completed&quot; } },
+  { $limit: 10 }
+])</code></pre>
+        <h1 id="section-14"></h1>
+        <h1 id="aggregation-match-and-sort-optimization-part-3">📈
+        Aggregation: $match and $sort Optimization (Part 3)</h1>
+        <h1 id="section-15"></h1>
+        <h1 id="aggregation-lookup-optimization">🎯 Aggregation: $lookup
+        Optimization</h1>
+        <pre><code>// Users collection
+db.users.createIndex({ _id: 1 })              // Default
+db.users.createIndex({ department: 1 })       // For lookup
+
+// Orders collection  
+db.orders.createIndex({ userId: 1 })           // For lookup
+
+db.orders.aggregate([
+  { $match: { status: &quot;pending&quot; } },           // Use index on orders
+  { $lookup: {
+      from: &quot;users&quot;,
+      localField: &quot;userId&quot;,                     // Uses userId index
+      foreignField: &quot;_id&quot;,                      // Uses _id index
+      as: &quot;user&quot;
+  }}
+])</code></pre>
+        <h1 id="section-16"></h1>
+        <h1 id="lookup-performance-pitfalls">⚠️ $lookup Performance
+        Pitfalls</h1>
+        <h2 id="the-hidden-scalability-problem">The Hidden Scalability
+        Problem</h2>
+        <pre><code>// LOOKS GOOD in development (1K docs)
+db.orders.aggregate([
+  { $lookup: {
+      from: &quot;products&quot;,
+      localField: &quot;productId&quot;,
+      foreignField: &quot;sku&quot;,              // NOT _id!
+      as: &quot;product&quot;
+  }}
+])
+
+// DISASTER in production (500K+ docs)
+// Each lookup becomes individual query!
+// 10,000 orders = 10,000 separate index lookups</code></pre>
+        <p><strong>Reality Check:</strong> $lookup doesn’t work like SQL
+        JOINs</p>
+        <h1 id="section-17"></h1>
+        <h1 id="lookup-when-it-goes-wrong">🚨 $lookup: When It Goes
+        Wrong</h1>
+        <h2 id="problem-scenarios">Problem Scenarios</h2>
+        <pre><code>// BAD: Non-_id field lookups at scale
+{ $lookup: { foreignField: &quot;email&quot; } }        // Slow with large collections
+{ $lookup: { foreignField: &quot;customerId&quot; } }   // Not optimized like _id
+
+// BAD: Complex filtering in lookup
+{ $lookup: {
+    from: &quot;users&quot;,
+    let: { orderId: &quot;$_id&quot; },
+    pipeline: [
+      { $match: { 
+          $expr: { $eq: [&quot;$orders&quot;, &quot;$$orderId&quot;] },
+          status: &quot;active&quot;,                      // Additional filtering
+          region: { $in: [&quot;US&quot;, &quot;CA&quot;] }         // Compound conditions
+      }}
+    ]
+}}</code></pre>
+        <h1 id="section-18"></h1>
+        <h1 id="lookup-when-it-goes-wrong-performance">🚨 $lookup: When
+        It Goes Wrong (Performance)</h1>
+        <p><strong>Performance Impact:</strong> O(n × m) instead of
+        expected O(log n)</p>
+        <h1 id="section-19"></h1>
+        <h1 id="lookup-performance-reality">📊 $lookup Performance
+        Reality</h1>
+        <h2 id="the-numbers-dont-lie">The Numbers Don’t Lie</h2>
+        <pre><code>// Small scale (1-10K docs): Works fine
+Orders: 5,000 documents
+Users: 2,000 documents  
+Lookup time: ~50ms ✅
+
+// Medium scale (50-100K docs): Starts degrading
+Orders: 75,000 documents
+Users: 50,000 documents
+Lookup time: ~2,500ms ⚠️
+
+// Large scale (500K+ docs): Major performance issues
+Orders: 500,000 documents  
+Users: 200,000 documents
+Lookup time: ~45,000ms ❌ (45 seconds!)</code></pre>
+        <h1 id="section-20"></h1>
+        <h1 id="when-lookup-works-well">✅ When $lookup Works Well</h1>
+        <h2 id="efficient-lookup-patterns">Efficient $lookup
+        Patterns</h2>
+        <pre><code>// GOOD: _id lookups (always fast)
+{ $lookup: { foreignField: &quot;_id&quot; } }
+
+// GOOD: Small, filtered datasets first
+db.orders.aggregate([
+  { $match: { date: { $gte: today } } },      // Reduce dataset FIRST
+  { $limit: 100 },                            // Limit early
+  { $lookup: { ... } }                        // Then lookup
+])</code></pre>
+        <p><strong>Key Strategy:</strong> Filter and limit before lookup
+        operations</p>
+        <h1 id="section-21"></h1>
+        <h1 id="lookup-alternatives-at-scale">🔄 $lookup Alternatives at
+        Scale</h1>
+        <h2 id="better-patterns-for-large-collections">Better Patterns
+        for Large Collections</h2>
+        <pre><code>// Option 1: Embed data (denormalization)
+{
+  _id: ObjectId(&quot;...&quot;),
+  productName: &quot;iPhone 14&quot;,                   // Embed frequently accessed data
+  productPrice: 999,
+  productSku: &quot;IPHONE14-128&quot;
+}
+
+// Option 2: Application-level joins
+const orders = await db.orders.find({ status: &quot;pending&quot; });
+const userIds = orders.map(o =&gt; o.userId);
+const users = await db.users.find({ _id: { $in: userIds } });</code></pre>
+        <p><strong>Performance Tip:</strong> Sometimes avoiding $lookup
+        entirely is the best solution</p>
+        <h1 id="section-22"></h1>
+        <h1 id="update-delete-optimization">✏️ Update &amp; Delete
+        Optimization</h1>
+        <h2 id="update-operations">Update Operations</h2>
+        <pre><code>// Single document update - uses index
+db.users.updateOne(
+  { email: &quot;john@example.com&quot; },      // Filter uses index
+  { $set: { lastLogin: new Date() } }
+)
+
+// Multi-document update - benefits from index
+db.users.updateMany(
+  { status: &quot;inactive&quot; },             // Filter uses index
+  { $set: { archived: true } }
+)
+
+// Index needed: { email: 1 } and { status: 1 }</code></pre>
+        <h1 id="section-23"></h1>
+        <h1 id="delete-optimization">🗑️ Delete Optimization</h1>
+        <pre><code>// Efficient delete with index
+db.users.deleteMany({ 
+  status: &quot;inactive&quot;, 
+  lastLogin: { $lt: new Date(&quot;2023-01-01&quot;) } 
+})
+
+// Optimal index: { status: 1, lastLogin: 1 }</code></pre>
+        <p><strong>Key Point:</strong> Delete operations scan first,
+        then delete. Good indexes make the scan fast!</p>
+        <h1 id="section-24"></h1>
+        <h1 id="mongoose-specific-indexing">🔧 Mongoose-Specific
+        Indexing</h1>
+        <h2 id="schema-level-index-definition">Schema-Level Index
+        Definition</h2>
+        <pre><code>const userSchema = new mongoose.Schema({
+  email: { 
+    type: String, 
+    required: true,
+    index: true,        // Single field index
+    unique: true        // Unique constraint
+  },
+  status: String,
+  age: Number,
+  lastLogin: Date
+});
+
+// Compound indexes
+userSchema.index({ status: 1, age: 1 });
+userSchema.index({ status: 1, lastLogin: -1 });</code></pre>
+        <h1 id="section-25"></h1>
+        <h1 id="mongoose-specific-indexing-part-2">🔧 Mongoose-Specific
+        Indexing (Part 2)</h1>
+        <h1 id="section-26"></h1>
+        <h1 id="mongoose-query-optimization">🚀 Mongoose Query
+        Optimization</h1>
+        <pre><code>// GOOD: Use lean() for read-only queries
+const users = await User.find({ status: &quot;active&quot; })
+  .lean()                    // Skip Mongoose document wrapper
+  .select(&#39;name email&#39;)      // Project only needed fields
+  .limit(100);
+
+// GOOD: Use explain() to check query plans
+const explained = await User.find({ status: &quot;active&quot; }).explain();
+console.log(explained.executionStats);
+
+// GOOD: Use proper field types
+const User = new Schema({
+  _id: { type: mongoose.Schema.Types.ObjectId }, // Proper ObjectId
+  email: { type: String, lowercase: true }        // Consistent format
+});</code></pre>
+        <h1 id="section-27"></h1>
+        <h1 id="common-pitfalls-anti-patterns">⚠️ Common Pitfalls &amp;
+        Anti-Patterns</h1>
+        <h2 id="wrong-index-field-order">1. Wrong Index Field Order</h2>
+        <pre><code>// BAD: Wrong order for this query
+db.users.createIndex({ age: 1, status: 1 })
+db.users.find({ status: &quot;active&quot;, age: { $gte: 25 } }).sort({ name: 1 })
+
+// GOOD: Follow ESR principle
+db.users.createIndex({ status: 1, name: 1, age: 1 })</code></pre>
+        <h1 id="section-28"></h1>
+        <h1 id="common-pitfalls-anti-patterns-2.-too-many-indexes">⚠️
+        Common Pitfalls &amp; Anti-Patterns (2. Too Many Indexes)</h1>
+        <h2 id="too-many-indexes">2. Too Many Indexes</h2>
+        <pre><code>// BAD: Index overload
+db.users.createIndex({ email: 1 })
+db.users.createIndex({ status: 1 })
+db.users.createIndex({ age: 1 })
+db.users.createIndex({ city: 1 })
+// Every write now updates 5 indexes!</code></pre>
+        <h1 id="section-29"></h1>
+        <h1 id="common-pitfalls-anti-patterns-part-3">⚠️ Common Pitfalls
+        &amp; Anti-Patterns (Part 3)</h1>
+        <h1 id="section-30"></h1>
+        <h1 id="regex-anti-patterns">🚫 Regex Anti-Patterns</h1>
+        <h2 id="regex-optimization-misunderstandings">Regex Optimization
+        Misunderstandings</h2>
+        <pre><code>// BAD: Unanchored with regex operators
+db.users.find({ email: { $regex: /gm.*il/ } })      // Collection scan!
+
+// OK: Static text (MongoDB can sometimes optimize)
+db.users.find({ email: { $regex: /gmail/ } })       // May use index bounds
+
+// GOOD: Left-anchored regex can use index
+db.users.find({ email: { $regex: /^john/ } })</code></pre>
+        <p><strong>Key Point:</strong> Regex operators (<code>.</code>,
+        <code>*</code>, <code>+</code>) prevent index usage when
+        unanchored</p>
+        <p><strong>See regex optimization deep dive for complete
+        details</strong></p>
+        <h1 id="section-31"></h1>
+        <h1 id="negative-query-anti-patterns">🚫 Negative Query
+        Anti-Patterns</h1>
+        <h2 id="ne-and-nin-performance-problems">$ne and $nin
+        Performance Problems</h2>
+        <pre><code>// BAD: These scan entire collection
+db.users.find({ status: { $ne: &quot;deleted&quot; } })
+db.users.find({ status: { $nin: [&quot;deleted&quot;, &quot;banned&quot;] } })
+
+// GOOD: Use positive conditions instead
+db.users.find({ status: { $in: [&quot;active&quot;, &quot;pending&quot;] } })</code></pre>
+        <p><strong>Why This Matters:</strong> Negative queries examine
+        most documents in your collection</p>
+        <h1 id="section-32"></h1>
+        <h1 id="lookup-scale-anti-patterns">🚫 $lookup Scale
+        Anti-Patterns</h1>
+        <h2 id="naive-lookup-assumptions">Naive $lookup Assumptions</h2>
+        <pre><code>// BAD: Assumes $lookup scales like SQL JOINs
+db.orders.aggregate([
+  { $lookup: { foreignField: &quot;customerId&quot; } }  // Disaster with 500K+ docs!
+])
+
+// GOOD: Filter first, lookup small datasets
+db.orders.aggregate([
+  { $match: { date: { $gte: today } } },      // Reduce dataset FIRST
+  { $lookup: { foreignField: &quot;customerId&quot; } }
+])</code></pre>
+        <p><strong>Reality Check:</strong> $lookup doesn’t work like SQL
+        JOINs at scale</p>
+        <h1 id="section-33"></h1>
+        <h1 id="critical-index-anti-patterns">🚨 Critical Index
+        Anti-Patterns</h1>
+        <h2 id="multiple-range-queries-index-disaster">Multiple Range
+        Queries = Index Disaster</h2>
+        <pre><code>// BAD: Multiple ranges can&#39;t use compound index efficiently
+db.products.find({ 
+  price: { $gte: 100, $lte: 500 },      // Range 1
+  weight: { $gte: 1, $lte: 10 },        // Range 2  
+  rating: { $gte: 4.0 }                 // Range 3
+})
+
+// Index: { price: 1, weight: 1, rating: 1 }
+// Reality: Only price range can use index efficiently!
+// weight and rating become collection scans</code></pre>
+        <p><strong>Rule:</strong> Only ONE range condition per query can
+        use index efficiently</p>
+        <h1 id="section-34"></h1>
+        <h1 id="in-array-size-anti-patterns">💥 $in Array Size
+        Anti-Patterns</h1>
+        <h2 id="when-in-becomes-your-enemy">When $in Becomes Your
+        Enemy</h2>
+        <pre><code>// BAD: Large $in arrays kill performance
+const userIds = [...Array(10000)].map(() =&gt; new ObjectId()); // 10K IDs!
+db.orders.find({ userId: { $in: userIds } })
+
+// Performance characteristics:
+// 100 IDs in $in: ~50ms ✅
+// 1,000 IDs in $in: ~500ms ⚠️  
+// 10,000 IDs in $in: ~15,000ms ❌ (15 seconds!)</code></pre>
+        <h1 id="section-35"></h1>
+        <h1 id="in-array-size-anti-patterns-better-approaches">💥 $in
+        Array Size Anti-Patterns (Better Approaches)</h1>
+        <p><strong>Better Approaches:</strong> // Option 1: Batch
+        processing for (const batch of chunks(userIds, 500)) { await
+        db.orders.find({ userId: { $in: batch } }); }</p>
+        <pre><code>// Option 2: Flip the query
+db.orders.find({ userId: { $exists: true } })
+  .forEach(order =&gt; {
+    if (userIdSet.has(order.userId)) { /* process */ }
+  });</code></pre>
+        <h1 id="section-36"></h1>
+        <h1 id="in-array-size-anti-patterns-part-3">💥 $in Array Size
+        Anti-Patterns (Part 3)</h1>
+        <h1 id="section-37"></h1>
+        <h1 id="array-index-scalability-pitfalls">🗂️ Array Index
+        Scalability Pitfalls</h1>
+        <h2 id="multikey-index-performance-degradation">Multikey Index
+        Performance Degradation</h2>
+        <pre><code>// Document with large arrays
+{
+  _id: ObjectId(&quot;...&quot;),
+  tags: [&quot;electronics&quot;, &quot;mobile&quot;, &quot;smartphone&quot;, /* ...500 more tags */],
+  categories: [&quot;tech&quot;, &quot;gadgets&quot;, /* ...200 more categories */]
+}
+
+// Index on array fields
+db.products.createIndex({ tags: 1, categories: 1 })
+
+// Problems:
+// 1. Index size explodes: 500 × 200 = 100,000 index entries per document!
+// 2. Write performance degrades severely
+// 3. Memory usage skyrockets</code></pre>
+        <h1 id="section-38"></h1>
+        <h1 id="array-index-scalability-pitfalls-solutions">🗂️ Array
+        Index Scalability Pitfalls (Solutions)</h1>
+        <p><strong>Solutions:</strong> // Option 1: Limit array sizes {
+        maxArraySize: 50 } // Enforce in application</p>
+        <pre><code>// Option 2: Use text index for searchable arrays
+db.products.createIndex({ tags: &quot;text&quot; })
+
+// Option 3: Separate collection for array items
+// products collection + product_tags collection</code></pre>
+        <h1 id="section-39"></h1>
+        <h1 id="group-sort-anti-patterns">📊 Group &amp; Sort
+        Anti-Patterns</h1>
+        <h2 id="the-wrong-order-trap">The Wrong Order Trap</h2>
+        <pre><code>// BAD: Sort after group = in-memory sort
+db.orders.aggregate([
+  { $group: { 
+      _id: &quot;$customerId&quot;, 
+      totalAmount: { $sum: &quot;$amount&quot; },
+      orderCount: { $sum: 1 }
+  }},
+  { $sort: { totalAmount: -1 } }        // Can&#39;t use index!
+])
+
+// GOOD: Sort before group when possible
+db.orders.aggregate([
+  { $sort: { customerId: 1, amount: -1 } },  // Uses index
+  { $group: { 
+      _id: &quot;$customerId&quot;,
+      maxAmount: { $first: &quot;$amount&quot; },       // Pre-sorted!
+      totalAmount: { $sum: &quot;$amount&quot; }
+  }}
+])
+
+// Index: { customerId: 1, amount: -1 }</code></pre>
+        <h1 id="section-40"></h1>
+        <h1 id="group-sort-anti-patterns-part-2">📊 Group &amp; Sort
+        Anti-Patterns (Part 2)</h1>
+        <h1 id="section-41"></h1>
+        <h1 id="compound-index-vs-multiple-ranges">🎯 Compound Index vs
+        Multiple Ranges</h1>
+        <h2 id="the-selectivity-problem">The Selectivity Problem</h2>
+        <pre><code>// BAD: Low selectivity fields with ranges
+db.events.find({
+  type: &quot;click&quot;,                         // Low selectivity (90% of docs)
+  timestamp: { $gte: yesterday },        // Range
+  userId: { $in: [1000 user IDs] }      // High selectivity
+})
+
+// Index: { type: 1, timestamp: 1, userId: 1 }
+// Problem: Scans 90% of collection before filtering!
+
+// GOOD: High selectivity first
+// Index: { userId: 1, type: 1, timestamp: 1 }
+// Finds specific users first, then filters</code></pre>
+        <p><strong>Selectivity Rule:</strong> Most selective fields
+        first, especially before ranges</p>
+        <h1 id="section-42"></h1>
+        <h1 id="regex-optimization-deep-dive">🔍 Regex Optimization Deep
+        Dive</h1>
+        <h2 id="static-text-vs-regex-operators">Static Text vs Regex
+        Operators</h2>
+        <pre><code>// SURPRISING: These can sometimes use indexes even unanchored!
+db.users.find({ name: { $regex: /john/ } })        // Static text
+db.users.find({ name: { $regex: /smith/ } })       // Static text
+db.users.find({ name: { $regex: /admin/ } })       // Static text
+
+// NEVER optimized: Regex operators can&#39;t use index unanchored
+db.users.find({ name: { $regex: /joh+n/ } })       // + operator
+db.users.find({ name: { $regex: /sm.*th/ } })      // . and * operators  
+db.users.find({ name: { $regex: /admin?/ } })      // ? operator</code></pre>
+        <p><strong>Key Insight:</strong> MongoDB can sometimes optimize
+        static text searches</p>
+        <h1 id="section-43"></h1>
+        <h1 id="mongodbs-smart-regex-optimizations">⚡ MongoDB’s Smart
+        Regex Optimizations</h1>
+        <h2 id="the-hidden-index-magic">The Hidden Index Magic</h2>
+        <pre><code>// Index: { name: 1 }
+
+// MongoDB CAN optimize these (static text):
+/john/           // Looks for &quot;john&quot; substring - can use index bounds!
+/smith/          // Looks for &quot;smith&quot; substring
+/company/        // Static text pattern
+
+// MongoDB CANNOT optimize these (regex operators):
+/joh+n/          // + means &quot;one or more h&quot; - infinite possibilities
+/sm.*th/         // .* means &quot;anything between&quot; - too broad
+/compan(y|ies)/  // Alternation - multiple patterns</code></pre>
+        <p><strong>Performance Impact:</strong> - Static text: Can
+        narrow index scan range - Regex operators: Always full
+        collection scan (unless anchored)</p>
+        <h1 id="section-44"></h1>
+        <h1 id="regex-performance-comparison">📊 Regex Performance
+        Comparison</h1>
+        <h2 id="real-performance-numbers">Real Performance Numbers</h2>
+        <pre><code>// Test collection: 1M user documents with name field indexed
+
+// Static unanchored (optimizable)
+db.users.find({ name: { $regex: /smith/ } })
+// Index bounds: [&quot;smith&quot;, &quot;smithz&quot;)  
+// Performance: ~100ms, examines ~1000 docs ✅
+
+// Regex operator unanchored (not optimizable)  
+db.users.find({ name: { $regex: /smit+h/ } })
+// No index bounds possible
+// Performance: ~5000ms, examines ALL 1M docs ❌
+
+// Left-anchored (always optimizable)
+db.users.find({ name: { $regex: /^smit+h/ } })
+// Index bounds: [&quot;smit&quot;, &quot;smiu&quot;)
+// Performance: ~50ms, examines ~100 docs ✅</code></pre>
+        <h1 id="section-45"></h1>
+        <h1 id="regex-best-practices">🎯 Regex Best Practices</h1>
+        <h2 id="optimization-strategy">Optimization Strategy</h2>
+        <pre><code>// BEST: Use text indexes for complex searches
+db.users.createIndex({ name: &quot;text&quot;, email: &quot;text&quot; })
+db.users.find({ $text: { $search: &quot;john smith&quot; } })
+
+// GOOD: Left-anchor when possible
+db.users.find({ email: { $regex: /^john.*@company\.com$/ } })
+
+// OK: Static text (MongoDB optimizes some cases)
+db.users.find({ name: { $regex: /john/ } })
+
+// BAD: Unanchored with regex operators
+db.users.find({ name: { $regex: /joh+n.*smith/ } })</code></pre>
+        <h1 id="section-46"></h1>
+        <h1 id="regex-best-practices-case-sensitivity-gotcha">🎯 Regex
+        Best Practices (Case Sensitivity Gotcha)</h1>
+        <h2 id="case-sensitivity-gotcha">Case Sensitivity Gotcha</h2>
+        <pre><code>// BAD: Case-insensitive kills optimization
+db.users.find({ name: { $regex: /john/i } })        // Collection scan!
+
+// GOOD: Store data in consistent case
+db.users.find({ name: { $regex: /john/ } })         // Can optimize
+// Ensure data is stored as: &quot;John Smith&quot; or &quot;john smith&quot; consistently</code></pre>
+        <h1 id="section-47"></h1>
+        <h1 id="selectivity-and-performance">📊 Selectivity and
+        Performance</h1>
+        <h2 id="understanding-selectivity">Understanding
+        Selectivity</h2>
+        <pre><code>// High selectivity (GOOD) - finds few documents
+db.users.find({ email: &quot;john@example.com&quot; })      // 1 out of 1M
+
+// Medium selectivity (OK) - finds some documents  
+db.users.find({ city: &quot;New York&quot; })               // 50K out of 1M
+
+// Low selectivity (BAD) - finds many documents
+db.users.find({ status: &quot;active&quot; })               // 900K out of 1M</code></pre>
+        <p><strong>Rule:</strong> More selective fields should come
+        first in compound indexes</p>
+        <h1 id="section-48"></h1>
+        <h1 id="index-monitoring-analysis">🛠️ Index Monitoring &amp;
+        Analysis</h1>
+        <h2 id="using-explain">Using explain()</h2>
+        <pre><code>// Get execution statistics
+const result = await db.users.find({ status: &quot;active&quot; }).explain(&quot;executionStats&quot;);
+
+console.log({
+  indexUsed: result.executionStats.executionStages.indexName,
+  docsExamined: result.executionStats.totalDocsExamined,
+  docsReturned: result.executionStats.totalDocsReturned,
+  executionTime: result.executionStats.executionTimeMillis
+});</code></pre>
+        <p><strong>Key Metrics:</strong> -
+        <code>totalDocsExamined</code> vs <code>totalDocsReturned</code>
+        (lower ratio = better) - <code>executionTimeMillis</code> (lower
+        = better) - <code>indexName</code> (should not be null)</p>
+        <h1 id="section-49"></h1>
+        <h1 id="collection-scan-detection">📈 Collection Scan
+        Detection</h1>
+        <pre><code>// Signs of collection scans:
+{
+  &quot;stage&quot;: &quot;COLLSCAN&quot;,                    // No index used
+  &quot;totalDocsExamined&quot;: 1000000,           // Examined all docs
+  &quot;totalDocsReturned&quot;: 1,                 // Returned few docs
+  &quot;executionTimeMillis&quot;: 1250             // High execution time
+}
+
+// Good index usage:
+{
+  &quot;stage&quot;: &quot;IXSCAN&quot;,                      // Index scan
+  &quot;indexName&quot;: &quot;status_1_age_1&quot;,          // Used specific index
+  &quot;totalDocsExamined&quot;: 5,                 // Examined few docs
+  &quot;totalDocsReturned&quot;: 5,                 // Returned matched docs
+  &quot;executionTimeMillis&quot;: 2                // Fast execution
+}</code></pre>
+        <h1 id="section-50"></h1>
+        <h1 id="collection-scan-detection-part-2">📈 Collection Scan
+        Detection (Part 2)</h1>
+        <h1 id="section-51"></h1>
+        <h1 id="best-practices-summary">🎯 Best Practices Summary</h1>
+        <h2 id="index-design">Index Design</h2>
+        <ol type="1">
+        <li><strong>Follow ESR rule</strong> for compound indexes</li>
+        <li><strong>Put selective fields first</strong> in compound
+        indexes</li>
+        <li><strong>Create indexes for your query patterns</strong>, not
+        your data structure</li>
+        <li><strong>Use covering indexes</strong> when possible</li>
+        <li><strong>Limit array sizes</strong> to prevent multikey index
+        explosion</li>
+        </ol>
+        <h2 id="query-writing">Query Writing</h2>
+        <ol type="1">
+        <li><strong>Avoid $ne, $nin, and unanchored regex with
+        operators</strong></li>
+        <li><strong>Use projection</strong> to limit returned
+        fields</li>
+        <li><strong>Limit result sets</strong> with
+        <code>.limit()</code></li>
+        <li><strong>Use explain()</strong> to verify index usage</li>
+        <li><strong>Batch large $in arrays</strong> (max ~500-1000
+        items)</li>
+        <li><strong>Only one range condition</strong> per query</li>
+        <li><strong>Sort before group</strong> when possible</li>
+        <li><strong>Prefer static text regex</strong> over
+        operator-based patterns</li>
+        </ol>
+        <h1 id="section-52"></h1>
+        <h1 id="development-workflow">🔧 Development Workflow</h1>
+        <h2 id="development-phase">1. Development Phase</h2>
+        <pre><code>// Enable profiling for slow queries
+db.setProfilingLevel(2, { slowms: 100 })
+
+// Use explain in development
+const query = User.find({ status: &quot;active&quot; });
+console.log(await query.explain());</code></pre>
+        <h2 id="production-monitoring">2. Production Monitoring</h2>
+        <pre><code>// Monitor slow operations
+db.runCommand({ profile: 0 })
+db.system.profile.find().sort({ ts: -1 }).limit(5)
+
+// Check index usage statistics
+db.users.aggregate([{ $indexStats: {} }])</code></pre>
+        <h1 id="section-53"></h1>
+        <h1 id="tools-resources">📚 Tools &amp; Resources</h1>
+        <h2 id="mongodb-tools">MongoDB Tools</h2>
+        <ul>
+        <li><strong>MongoDB Compass</strong> - Visual index
+        analysis</li>
+        <li><strong>db.collection.explain()</strong> - Query plan
+        analysis</li>
+        <li><strong>Database Profiler</strong> - Slow query
+        detection</li>
+        <li><strong>$indexStats</strong> - Index usage statistics</li>
+        </ul>
+        <h2 id="mongoose-tools">Mongoose Tools</h2>
+        <ul>
+        <li><strong>query.explain()</strong> - Mongoose wrapper for
+        explain</li>
+        <li><strong>Schema.index()</strong> - Schema-level index
+        definition</li>
+        <li><strong>mongoose.set(‘debug’, true)</strong> - Query
+        logging</li>
+        </ul>
+        <h1 id="section-54"></h1>
+        <h1 id="real-world-example">🚀 Real-World Example</h1>
+        <pre><code>// E-commerce product search
+const productSchema = new Schema({
+  name: String,
+  category: String,
+  price: Number,
+  inStock: Boolean,
+  rating: Number,
+  tags: [String]
+});
+
+// Query: Find in-stock products in category, sorted by rating
+Product.find({ 
+  category: &quot;electronics&quot;,     // Equality
+  inStock: true,              // Equality  
+  price: { $lte: 1000 }       // Range
+}).sort({ rating: -1 })       // Sort
+
+// Optimal index: ESR pattern
+productSchema.index({ category: 1, inStock: 1, rating: -1, price: 1 });</code></pre>
+        <h1 id="section-55"></h1>
+        <h1 id="real-world-example-part-2">🚀 Real-World Example (Part
+        2)</h1>
+        <h1 id="section-56"></h1>
+        <h1 id="action-items">📋 Action Items</h1>
+        <h2 id="immediate-steps">Immediate Steps</h2>
+        <ol type="1">
+        <li><strong>Audit existing queries</strong> - Run explain() on
+        slow queries</li>
+        <li><strong>Review current indexes</strong> - Remove unused, add
+        missing</li>
+        <li><strong>Enable query profiling</strong> - Identify
+        problematic queries</li>
+        <li><strong>Add schema-level indexes</strong> - Define in
+        Mongoose schemas</li>
+        </ol>
+        <h2 id="ongoing-practices">Ongoing Practices</h2>
+        <ol type="1">
+        <li><strong>Test query performance</strong> - Use explain() in
+        development</li>
+        <li><strong>Monitor production metrics</strong> - Track slow
+        queries and index usage</li>
+        <li><strong>Regular index maintenance</strong> - Review and
+        optimize quarterly</li>
+        </ol>
+        <h1 id="section-57"></h1>
+        <h1 id="key-takeaways">🎉 Key Takeaways</h1>
+        <h2 id="remember-these-rules">Remember These Rules</h2>
+        <ol type="1">
+        <li><strong>Indexes are about query patterns, not data
+        structure</strong></li>
+        <li><strong>ESR (Equality, Sort, Range) for compound
+        indexes</strong></li>
+        <li><strong>Left-to-right rule for compound index
+        usage</strong></li>
+        <li><strong>High selectivity fields come first</strong></li>
+        <li><strong>Every index has a write cost</strong></li>
+        <li><strong>Only ONE range query can use index
+        efficiently</strong></li>
+        <li><strong>Large $in arrays (&gt;1000) kill
+        performance</strong></li>
+        <li><strong>Array indexes explode with large/multiple
+        arrays</strong></li>
+        <li><strong>Static text regex (/foo/) can optimize, operators
+        (/foo+/) cannot</strong></li>
+        </ol>
+        <h1 id="section-58"></h1>
+        <h1 id="key-takeaways-critical-anti-patterns-to-avoid">🎉 Key
+        Takeaways (Critical Anti-Patterns to Avoid)</h1>
+        <h2 id="critical-anti-patterns-to-avoid">Critical Anti-Patterns
+        to Avoid</h2>
+        <ul>
+        <li>Multiple range conditions in one query</li>
+        <li>$lookup on non-_id fields at scale</li>
+        <li>Sort after group operations</li>
+        <li>Large multikey indexes</li>
+        <li>Unanchored regex with operators (+, *, ?, etc.)</li>
+        </ul>
+        <h2 id="test-monitor-optimize">Test, Monitor, Optimize</h2>
+        <ul>
+        <li>Use <code>explain()</code> religiously</li>
+        <li>Monitor slow query logs</li>
+        <li>Regular performance reviews</li>
+        </ul>
+        <h1 id="section-59"></h1>
+        <h1 id="questions-discussion">❓ Questions &amp; Discussion</h1>
+        <h2 id="lets-talk-about">Let’s talk about:</h2>
+        <ul>
+        <li>Your specific query patterns</li>
+        <li>Performance challenges you’re facing</li>
+        <li>Index strategies for your use cases</li>
+        <li>Mongoose optimization techniques</li>
+        </ul>
+        <p><strong>Thank you for attending!</strong> <em>Happy indexing!
+        🚀</em></p>
+        <h1 id="section-60"></h1>
+        <h1 id="additional-resources">📖 Additional Resources</h1>
+        <h2 id="documentation">Documentation</h2>
+        <ul>
+        <li><a href="https://docs.mongodb.com/manual/indexes/">MongoDB
+        Index Documentation</a></li>
+        <li><a
+        href="https://mongoosejs.com/docs/guide.html#indexes">Mongoose
+        Index Documentation</a></li>
+        <li><a
+        href="https://docs.mongodb.com/manual/core/query-optimization/">Query
+        Optimization Guide</a></li>
+        </ul>
+        <h2 id="tools">Tools</h2>
+        <ul>
+        <li><a href="https://www.mongodb.com/products/compass">MongoDB
+        Compass</a></li>
+        <li><a href="https://studio3t.com/">Studio 3T</a> - Query
+        profiling</li>
+        <li><a
+        href="https://github.com/your-repo/IndexAnalyzer">IndexAnalyzer</a>
+        - Automated index analysis</li>
+        <li><a
+        href="https://github.com/your-repo/IndexAnalyzer/tree/main/slides">MongoDB
+        Indexing Field Guide</a> - This presentation</li>
+        </ul>
+        <p><em>Contact: [your-email@company.com]</em></p>
+    </div>
+    
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            slides.forEach((slide, index) => {
+                slide.style.display = index === n ? 'block' : 'none';
+            });
+            document.getElementById('slide-counter').textContent = n + 1;
+            currentSlide = n;
+        }
+        
+        function nextSlide() {
+            const slides = document.querySelectorAll('.slide');
+            if (currentSlide < slides.length - 1) {
+                showSlide(currentSlide + 1);
+            }
+        }
+        
+        function previousSlide() {
+            if (currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        }
+        
+        function toggleNotes(button) {
+            const notesContent = button.nextElementSibling;
+            const isVisible = notesContent.classList.contains('show');
+            
+            if (isVisible) {
+                notesContent.classList.remove('show');
+                button.textContent = '📝 Show Notes';
+            } else {
+                notesContent.classList.add('show');
+                button.textContent = '📝 Hide Notes';
+            }
+        }
+        
+        // Split content into slides and process notes
+        function initializeSlides() {
+            const container = document.getElementById('slides-container');
+            const content = container.innerHTML;
+            
+            // Split by our custom slide separator (Pandoc converts ---SLIDE--- to <p>—SLIDE—</p>)
+            const slideParts = content.split(/<p>—SLIDE—<\/p>/);
+            const slides = [];
+            
+            slideParts.forEach((slideContent, index) => {
+                if (slideContent.trim()) {
+                    const slideDiv = document.createElement('div');
+                    slideDiv.className = 'slide';
+                    slideDiv.style.display = index === 0 ? 'block' : 'none';
+                    
+                    const slideContentDiv = document.createElement('div');
+                    slideContentDiv.className = 'slide-content';
+                    slideContentDiv.innerHTML = slideContent;
+                    
+                    slideDiv.appendChild(slideContentDiv);
+                    slides.push(slideDiv);
+                }
+            });
+            
+            // Clear container and add slides
+            container.innerHTML = '';
+            slides.forEach(slide => container.appendChild(slide));
+            
+            // Process notes sections
+            processNotesSections();
+            
+            // Initialize navigation with actual slide count
+            window.totalSlides = slides.length;
+            showSlide(0);
+        }
+        
+        // Process notes sections after page load
+        function processNotesSections() {
+            const slides = document.querySelectorAll('.slide');
+            slides.forEach((slide, slideIndex) => {
+                // Find notes blocks (divs with class 'notes')
+                const notesBlocks = slide.querySelectorAll('.notes');
+                notesBlocks.forEach((notesBlock, notesIndex) => {
+                    // Create expandable notes section
+                    const notesSection = document.createElement('div');
+                    notesSection.className = 'notes-section';
+                    
+                    const toggleButton = document.createElement('button');
+                    toggleButton.className = 'notes-toggle';
+                    toggleButton.textContent = '📝 Show Notes';
+                    toggleButton.onclick = function() { toggleNotes(this); };
+                    
+                    const notesContent = document.createElement('div');
+                    notesContent.className = 'notes-content';
+                    
+                    const notesTitle = document.createElement('h4');
+                    notesTitle.textContent = 'Speaker Notes';
+                    
+                    notesContent.appendChild(notesTitle);
+                    notesContent.appendChild(notesBlock.cloneNode(true));
+                    
+                    notesSection.appendChild(toggleButton);
+                    notesSection.appendChild(notesContent);
+                    
+                    // Replace the original notes block
+                    notesBlock.parentNode.replaceChild(notesSection, notesBlock);
+                });
+            });
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                previousSlide();
+            }
+        });
+        
+        // Initialize slides after DOM is loaded
+        document.addEventListener('DOMContentLoaded', initializeSlides);
+        // Also process immediately in case DOM is already loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeSlides);
+        } else {
+            initializeSlides();
+        }
+    </script>
+</body>
+</html>
