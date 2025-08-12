@@ -9,7 +9,7 @@ BUILD_DIR = ../build/$(PRESENTATION_NAME)
 
 # Pandoc slide processing scripts
 MERGE_NOTES_SCRIPT = ../scripts/merge-notes-for-pandoc-v2.py
-HTML_TEMPLATE = $(shell realpath ../scripts/template-html-with-notes-v2.html)
+HTML_TEMPLATE = ../template/template-html-with-notes-v2.html
 
 # Output files
 BASE_PPTX = $(BUILD_DIR)/$(PRESENTATION_NAME).pptx
@@ -45,11 +45,10 @@ base-html:
 	@ls -la "../template/" || echo "❌ Template directory not found!"
 	@echo "🔍 Debug: Checking if template exists in template directory..."
 	@ls -la "../template/template-html-with-notes-v2.html" || echo "❌ Template not found in template directory!"
-	@echo "🔍 Debug: Pandoc version and data dir..."
+	@echo "🔍 Debug: Pandoc version..."
 	@pandoc --version | head -1 || echo "❌ Pandoc not found!"
-	@pandoc --data-dir="../template" --print-default-data-file=templates/template-html-with-notes-v2.html > /dev/null 2>&1 && echo "✅ Template found via --data-dir" || echo "❌ Template not found via --data-dir"
 	@mkdir -p $(BUILD_DIR)
-	@sed 's/^---$$/#/' $(MAIN_FILE) | pandoc --from markdown --to html -o $(BASE_HTML) --template="template-html-with-notes-v2.html" --data-dir="../template" --slide-level=1
+	@sed 's/^---$$/#/' $(MAIN_FILE) | pandoc --from markdown --to html -o $(BASE_HTML) --template="../template/template-html-with-notes-v2.html" --slide-level=1
 	@echo "✅ Base HTML saved to $(BASE_HTML)"
 
 # Speaker version targets
@@ -71,7 +70,7 @@ speaker-html:
 	@ls -la "../template/template-html-with-notes-v2.html" || echo "❌ Template not found in template directory!"
 	@mkdir -p $(BUILD_DIR)
 	@python3 $(MERGE_NOTES_SCRIPT) $(MAIN_FILE) $(SPEAKER_FILE) $(BUILD_DIR)/$(PRESENTATION_NAME)-speaker.md --notes-type=Speaker
-	@pandoc --from markdown --to html -o $(SPEAKER_HTML) --template="template-html-with-notes-v2.html" --data-dir="../template" $(BUILD_DIR)/$(PRESENTATION_NAME)-speaker.md
+	@pandoc --from markdown --to html -o $(SPEAKER_HTML) --template="../template/template-html-with-notes-v2.html" $(BUILD_DIR)/$(PRESENTATION_NAME)-speaker.md
 	@echo "✅ Speaker HTML saved to $(SPEAKER_HTML)"
 
 # Published version targets
@@ -93,7 +92,7 @@ published-html:
 	@ls -la "../template/template-html-with-notes-v2.html" || echo "❌ Template not found in template directory!"
 	@mkdir -p $(BUILD_DIR)
 	@python3 $(MERGE_NOTES_SCRIPT) $(MAIN_FILE) $(PUBLISHED_FILE) $(BUILD_DIR)/$(PRESENTATION_NAME)-published.md --notes-type=Published
-	@pandoc --from markdown --to html -o $(PUBLISHED_HTML) --template="template-html-with-notes-v2.html" --data-dir="../template" $(BUILD_DIR)/$(PRESENTATION_NAME)-published.md
+	@pandoc --from markdown --to html -o $(PUBLISHED_HTML) --template="../template/template-html-with-notes-v2.html" $(BUILD_DIR)/$(PRESENTATION_NAME)-published.md
 	@echo "✅ Published HTML saved to $(PUBLISHED_HTML)"
 
 # Development targets
