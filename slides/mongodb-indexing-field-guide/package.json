@@ -1,0 +1,45 @@
+{
+  "name": "mongodb-indexing-field-guide",
+  "version": "1.0.0",
+  "description": "MongoDB Indexing Field Guide - Performance & Query Optimization for Node.js/Mongoose developers",
+  "scripts": {
+    "build": "make all",
+    "build:base": "make base",
+    "build:speaker": "make speaker", 
+    "build:published": "make published",
+    "dev": "make dev",
+    "dev:speaker": "make dev-speaker",
+    "dev:published": "make dev-published",
+    "clean": "make clean",
+    "stats": "make stats",
+    "validate": "make validate-slides",
+    "help": "make help"
+  },
+  "keywords": [
+    "mongodb",
+    "indexing",
+    "performance",
+    "nodejs",
+    "mongoose",
+    "database",
+    "optimization",
+    "presentation",
+    "pandoc"
+  ],
+  "author": "Database Performance Team",
+  "license": "MIT",
+  "devDependencies": {
+    "pandoc": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/MongoLearnings"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/MongoLearnings/issues"
+  },
+  "homepage": "https://github.com/your-org/MongoLearnings#readme"
+} 

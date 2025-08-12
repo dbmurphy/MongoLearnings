@@ -1,0 +1,41 @@
+{
+  "name": "{{GUIDE_NAME}}",
+  "version": "1.0.0",
+  "description": "{{GUIDE_DESCRIPTION}}",
+  "main": "{{GUIDE_NAME}}.md",
+  "scripts": {
+    "build": "marp {{GUIDE_NAME}}.md --html --pdf --pptx",
+    "build:html": "marp {{GUIDE_NAME}}.md --html --output {{GUIDE_NAME}}.html",
+    "build:pdf": "marp {{GUIDE_NAME}}.md --pdf --output {{GUIDE_NAME}}.pdf",
+    "build:pptx": "marp {{GUIDE_NAME}}.md --pptx --output {{GUIDE_NAME}}.pptx",
+    "dev": "marp {{GUIDE_NAME}}.md --html --output {{GUIDE_NAME}}.html && open {{GUIDE_NAME}}.html",
+    "watch": "marp --watch {{GUIDE_NAME}}.md --html --output {{GUIDE_NAME}}.html",
+    "preview": "marp --preview {{GUIDE_NAME}}.md",
+    "clean": "rm -f *.html *.pdf *.pptx"
+  },
+  "keywords": [
+    "{{KEYWORD_1}}",
+    "{{KEYWORD_2}}",
+    "{{KEYWORD_3}}",
+    "presentation",
+    "marp",
+    "slides"
+  ],
+  "author": "{{AUTHOR_NAME}}",
+  "license": "{{LICENSE}}",
+  "devDependencies": {
+    "@marp-team/marp-cli": "^3.4.0"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "{{REPOSITORY_URL}}"
+  },
+  "bugs": {
+    "url": "{{ISSUES_URL}}"
+  },
+  "homepage": "{{HOMEPAGE_URL}}"
+} 
