@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>$title$</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #1e1e1e;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+        
+        .slide {
+            min-height: 100vh;
+            padding: 40px;
+            box-sizing: border-box;
+            position: relative;
+        }
+        
+        .slide-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 0.5em;
+            color: #61dafb;
+        }
+        
+        h2 {
+            font-size: 2em;
+            margin-bottom: 0.5em;
+            color: #61dafb;
+        }
+        
+        h3 {
+            font-size: 1.5em;
+            margin-bottom: 0.5em;
+            color: #61dafb;
+        }
+        
+        p {
+            font-size: 1.2em;
+            margin-bottom: 1em;
+        }
+        
+        ul, ol {
+            font-size: 1.1em;
+            margin-bottom: 1em;
+        }
+        
+        li {
+            margin-bottom: 0.5em;
+        }
+        
+        code {
+            background: #2d2d2d;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', monospace;
+        }
+        
+        pre {
+            background: #2d2d2d;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        
+        pre code {
+            background: none;
+            padding: 0;
+        }
+        
+        /* Notes Section */
+        .notes-section {
+            margin-top: 30px;
+            border-top: 2px solid #61dafb;
+            padding-top: 20px;
+        }
+        
+        .notes-toggle {
+            background: #61dafb;
+            color: #1e1e1e;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .notes-toggle:hover {
+            background: #4fa8c5;
+        }
+        
+        .notes-content {
+            display: none;
+            background: #2d2d2d;
+            border: 1px solid #61dafb;
+            border-radius: 8px;
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        
+        .notes-content.show {
+            display: block;
+        }
+        
+        .notes-content h4 {
+            color: #61dafb;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        
+        /* Slide Navigation */
+        .slide-nav {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(30, 30, 30, 0.9);
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 1000;
+        }
+        
+        .slide-nav button {
+            background: #61dafb;
+            color: #1e1e1e;
+            border: none;
+            padding: 5px 10px;
+            margin: 0 2px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        
+        .slide-nav button:hover {
+            background: #4fa8c5;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .slide {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            h2 {
+                font-size: 1.5em;
+            }
+            
+            .slide-nav {
+                position: static;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-nav">
+        <button onclick="previousSlide()">←</button>
+        <span id="slide-counter">1</span>
+        <button onclick="nextSlide()">→</button>
+    </div>
+    
+    <div id="slides-container">
+        $body$
+    </div>
+    
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            slides.forEach((slide, index) => {
+                slide.style.display = index === n ? 'block' : 'none';
+            });
+            document.getElementById('slide-counter').textContent = n + 1;
+            currentSlide = n;
+        }
+        
+        function nextSlide() {
+            const slides = document.querySelectorAll('.slide');
+            if (currentSlide < slides.length - 1) {
+                showSlide(currentSlide + 1);
+            }
+        }
+        
+        function previousSlide() {
+            if (currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        }
+        
+        function toggleNotes(button) {
+            const notesContent = button.nextElementSibling;
+            const isVisible = notesContent.classList.contains('show');
+            
+            if (isVisible) {
+                notesContent.classList.remove('show');
+                button.textContent = '📝 Show Notes';
+            } else {
+                notesContent.classList.add('show');
+                button.textContent = '📝 Hide Notes';
+            }
+        }
+        
+        // Split content into slides and process notes
+        function initializeSlides() {
+            const container = document.getElementById('slides-container');
+            const content = container.innerHTML;
+            
+            // Split by our custom slide separator (Pandoc converts ---SLIDE--- to <p>—SLIDE—</p>)
+            const slideParts = content.split(/<p>—SLIDE—<\/p>/);
+            const slides = [];
+            
+            slideParts.forEach((slideContent, index) => {
+                if (slideContent.trim()) {
+                    const slideDiv = document.createElement('div');
+                    slideDiv.className = 'slide';
+                    slideDiv.style.display = index === 0 ? 'block' : 'none';
+                    
+                    const slideContentDiv = document.createElement('div');
+                    slideContentDiv.className = 'slide-content';
+                    slideContentDiv.innerHTML = slideContent;
+                    
+                    slideDiv.appendChild(slideContentDiv);
+                    slides.push(slideDiv);
+                }
+            });
+            
+            // Clear container and add slides
+            container.innerHTML = '';
+            slides.forEach(slide => container.appendChild(slide));
+            
+            // Process notes sections
+            processNotesSections();
+            
+            // Initialize navigation with actual slide count
+            window.totalSlides = slides.length;
+            showSlide(0);
+        }
+        
+        // Process notes sections after page load
+        function processNotesSections() {
+            const slides = document.querySelectorAll('.slide');
+            slides.forEach((slide, slideIndex) => {
+                // Find notes blocks (divs with class 'notes')
+                const notesBlocks = slide.querySelectorAll('.notes');
+                notesBlocks.forEach((notesBlock, notesIndex) => {
+                    // Create expandable notes section
+                    const notesSection = document.createElement('div');
+                    notesSection.className = 'notes-section';
+                    
+                    const toggleButton = document.createElement('button');
+                    toggleButton.className = 'notes-toggle';
+                    toggleButton.textContent = '📝 Show Notes';
+                    toggleButton.onclick = function() { toggleNotes(this); };
+                    
+                    const notesContent = document.createElement('div');
+                    notesContent.className = 'notes-content';
+                    
+                    const notesTitle = document.createElement('h4');
+                    notesTitle.textContent = 'Speaker Notes';
+                    
+                    notesContent.appendChild(notesTitle);
+                    notesContent.appendChild(notesBlock.cloneNode(true));
+                    
+                    notesSection.appendChild(toggleButton);
+                    notesSection.appendChild(notesContent);
+                    
+                    // Replace the original notes block
+                    notesBlock.parentNode.replaceChild(notesSection, notesBlock);
+                });
+            });
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                previousSlide();
+            }
+        });
+        
+        // Initialize slides after DOM is loaded
+        document.addEventListener('DOMContentLoaded', initializeSlides);
+        // Also process immediately in case DOM is already loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeSlides);
+        } else {
+            initializeSlides();
+        }
+    </script>
+</body>
+</html>
