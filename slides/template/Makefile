@@ -9,7 +9,7 @@ BUILD_DIR = ../build/$(PRESENTATION_NAME)
 
 # Pandoc slide processing scripts
 MERGE_NOTES_SCRIPT = ../scripts/merge-notes-for-pandoc-v2.py
-HTML_TEMPLATE = $(shell realpath ../scripts/template-html-with-notes-v2.html)
+HTML_TEMPLATE = ../scripts/template-html-with-notes-v2.html
 
 # Output files
 BASE_PPTX = $(BUILD_DIR)/$(PRESENTATION_NAME).pptx
@@ -38,7 +38,7 @@ base-pptx:
 base-html:
 	@echo "🚀 Building base HTML..."
 	@mkdir -p $(BUILD_DIR)
-	@sed 's/^---$$/#/' $(MAIN_FILE) | pandoc --from markdown --to html -o $(BASE_HTML) --template="$(HTML_TEMPLATE)" --slide-level=1
+	@sed 's/^---$$/#/' $(MAIN_FILE) | pandoc --from markdown --to html -o $(BASE_HTML) --template="template-html-with-notes-v2.html" --data-dir="../scripts" --slide-level=1
 	@echo "✅ Base HTML saved to $(BASE_HTML)"
 
 # Speaker version targets
@@ -57,7 +57,7 @@ speaker-html:
 	@echo "🎤 Building speaker HTML..."
 	@mkdir -p $(BUILD_DIR)
 	@python3 $(MERGE_NOTES_SCRIPT) $(MAIN_FILE) $(SPEAKER_FILE) $(BUILD_DIR)/$(PRESENTATION_NAME)-speaker.md --notes-type=Speaker
-	@pandoc --from markdown --to html -o $(SPEAKER_HTML) --template="$(HTML_TEMPLATE)" $(BUILD_DIR)/$(PRESENTATION_NAME)-speaker.md
+	@pandoc --from markdown --to html -o $(SPEAKER_HTML) --template="template-html-with-notes-v2.html" --data-dir="../scripts" $(BUILD_DIR)/$(PRESENTATION_NAME)-speaker.md
 	@echo "✅ Speaker HTML saved to $(SPEAKER_HTML)"
 
 # Published version targets
@@ -76,7 +76,7 @@ published-html:
 	@echo "📖 Building published HTML..."
 	@mkdir -p $(BUILD_DIR)
 	@python3 $(MERGE_NOTES_SCRIPT) $(MAIN_FILE) $(PUBLISHED_FILE) $(BUILD_DIR)/$(PRESENTATION_NAME)-published.md --notes-type=Published
-	@pandoc --from markdown --to html -o $(PUBLISHED_HTML) --template="$(HTML_TEMPLATE)" $(BUILD_DIR)/$(PRESENTATION_NAME)-published.md
+	@pandoc --from markdown --to html -o $(PUBLISHED_HTML) --template="template-html-with-notes-v2.html" --data-dir="../scripts" $(BUILD_DIR)/$(PRESENTATION_NAME)-published.md
 	@echo "✅ Published HTML saved to $(PUBLISHED_HTML)"
 
 # Development targets
