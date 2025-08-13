@@ -1,14 +1,3 @@
----
-marp: true
-theme: default
-class: lead
-backgroundColor: #1e1e1e
-color: #ffffff
-paginate: true
-header: 'MongoDB Aggregation Operators Performance Guide'
-footer: 'Complete Pipeline Operator Reference & Optimization'
----
-
 # 📊 MongoDB Aggregation Operators Performance Guide
 ## Complete Pipeline Operator Reference & Performance Optimization
 
@@ -73,11 +62,7 @@ db.sales.aggregate([
 ```
 
 ---
-
-# 🏗️ Aggregation Pipeline Architecture Deep Dive (Part 2)
-
----
-# ⚡ Core Performance Principles by Operator Type
+# ⚡ Core Performance Principles by Operator Type (Part 1)
 
 ## Streaming vs. Blocking Operations
 
@@ -112,7 +97,7 @@ db.sales.aggregate([
 **Key Insight:** Minimize blocking operations and optimize their data input size
 
 ---
-# 🔍 $match: The Performance Foundation
+# 🔍 $match: The Performance Foundation (Part 1)
 
 ## Advanced $match Optimization Patterns
 
@@ -132,7 +117,7 @@ db.sales.aggregate([
 
 ---
 
-# 🔍 $match: The Performance Foundation (Part 1)
+# 🔍 $match: The Performance Foundation (Part 2)
 
 ### ❌ Complex Expression Anti-Patterns
 ```javascript
@@ -146,16 +131,10 @@ db.sales.aggregate([
 { $addFields: { totalValue: { $multiply: ["$price", "$quantity"] } } },
 { $match: { totalValue: { $gt: 1000 } } }
 // Or even better: compute totalValue at insert time with index
-
----
-
-# 🔍 $match: The Performance Foundation (Part 3)
-
 ```
 
 ---
-# 📄 $project: Field Selection & Transformation
-
+# 📄 $project: Field Selection & Transformation (Part 1)
 ## Understanding $project Performance Impact
 
 ### Memory & Network Optimization
@@ -172,12 +151,11 @@ db.sales.aggregate([
 // AFTER: Minimal projection (500B each)  
 { $project: { title: 1, price: 1, _id: 0 } }
 // 10K docs × 500B = 5MB pipeline memory (10x improvement)
+```
 
 ---
 
-# 📄 $project: Field Selection & Transformation (Part 1)
-
-```
+# 📄 $project: Field Selection & Transformation (Part 2)
 
 ### Advanced $project Patterns
 ```javascript
@@ -199,17 +177,11 @@ db.sales.aggregate([
     "address.city": 1,
     "address.country": 1
 }}
-
----
-
-# 📄 $project: Field Selection & Transformation (Part 3)
-
 ```
 
 ---
-# ➕ $addFields, $set, $unset: Document Enhancement
 
-# ➕ $addFields, $set, $unset: Document Enhancement
+# ➕ $addFields, $set, $unset: Document Enhancement (Part 1)
 
 ## Performance-Optimized Field Operations
 
@@ -235,12 +207,11 @@ db.sales.aggregate([
     year: { $year: "$createdAt" },
     month: { $month: "$createdAt" }
 }}
+```
 
 ---
 
 # ➕ $addFields, $set, $unset: Document Enhancement (Part 2)
-
-```
 
 ### ❌ $addFields Anti-Patterns
 ```javascript
@@ -259,7 +230,7 @@ db.sales.aggregate([
 ```
 
 ---
-# 🔄 $replaceRoot & $replaceWith: Document Restructuring
+# 🔄 $replaceRoot & $replaceWith: Document Restructuring (Part 1)
 
 ## Advanced Document Transformation Patterns
 
@@ -278,12 +249,11 @@ db.sales.aggregate([
 
 // PERFORMANCE TIP: $replaceRoot is streaming - very memory efficient
 // Processes one document at a time, no accumulation required
+```
 
 ---
 
-# 🔄 $replaceRoot & $replaceWith: Document Restructuring (Part 1)
-
-```
+# 🔄 $replaceRoot & $replaceWith: Document Restructuring (Part 2)
 
 ### Common $replaceRoot Use Cases
 ```javascript
@@ -306,14 +276,10 @@ db.sales.aggregate([
         }
     }
 }}
-
----
-
-# 🔄 $replaceRoot & $replaceWith: Document Restructuring (Part 3)
-
 ```
 
 ---
+
 # 🗂️ $group: Advanced Aggregation Patterns
 
 ## Memory-Efficient Grouping Strategies
@@ -344,15 +310,11 @@ db.sales.aggregate([
     uniqueCategories: { $addToSet: "$category" }
 }}
 // Memory usage: Potentially 10GB+ with large datasets!
-
----
-
-# 🗂️ $group: Advanced Aggregation Patterns (Part 2)
-
 ```
 
 ---
-# 🧮 Advanced $group Accumulators & Performance
+
+# 🧮 Advanced $group Accumulators & Performance (Part 1)
 
 ## MongoDB 6.0+ New Performance Operators
 
@@ -388,12 +350,11 @@ db.sales.aggregate([
     }
 }}
 // Memory usage: Maintains only top N items instead of all items
+```
 
 ---
 
 # 🧮 Advanced $group Accumulators & Performance (Part 2)
-
-```
 
 ### Window Functions with $setWindowFields
 ```javascript
@@ -411,8 +372,7 @@ db.sales.aggregate([
 ```
 
 ---
-# 🔗 $lookup: Performance Risks & Mitigation Strategies
-
+# 🔗 $lookup: Performance Risks & Mitigation Strategies (Part 1)
 ## Critical $lookup Performance Warnings
 
 ### Collection Size Performance Degradation
@@ -434,12 +394,10 @@ db.sales.aggregate([
 // The exponential scaling problem:
 // N documents × M lookup candidates = N×M comparison operations
 // 1K × 10M = 10 billion comparisons - AVOID AT ALL COSTS!
-
+```
 ---
 
-# 🔗 $lookup: Performance Risks & Mitigation Strategies (Part 1)
-
-```
+# 🔗 $lookup: Performance Risks & Mitigation Strategies (Part 2)
 
 ### Emergency $lookup Mitigation (When Absolutely Unavoidable)
 
@@ -470,15 +428,11 @@ db.sales.aggregate([
 // Required indexes:
 // products: { active: 1, category: 1, _id: 1 }
 // products: { rating: 1 }
-
----
-
-# 🔗 $lookup: Performance Risks & Mitigation Strategies (Part 3)
-
 ```
 
 ---
-# 🌐 $graphLookup: Recursive Relationship Performance
+
+# 🌐 $graphLookup: Recursive Relationship Performance (Part 1)
 
 ## Optimizing Hierarchical Data Traversal
 
@@ -502,12 +456,11 @@ db.sales.aggregate([
 }}
 
 // Index requirement: { _id: 1 } (automatic) + { managerId: 1 }
+```
 
 ---
 
-# 🌐 $graphLookup: Recursive Relationship Performance (Part 1)
-
-```
+# 🌐 $graphLookup: Recursive Relationship Performance (Part 2)
 
 ### $graphLookup Memory Management
 ```javascript
@@ -533,15 +486,11 @@ db.sales.aggregate([
         region: "US-WEST"
     }
 }}
-
----
-
-# 🌐 $graphLookup: Recursive Relationship Performance (Part 3)
-
 ```
 
 ---
-# 🔀 $unionWith: Collection Merging Performance
+
+# 🔀 $unionWith: Collection Merging Performance (Part 1)
 
 ## Efficient Multi-Collection Aggregation
 
@@ -564,12 +513,11 @@ db.sales.aggregate([
 
 // BAD: Union large unfiltered collections
 { $unionWith: { coll: "massive_historical_data" } }  // No filtering!
+```
 
 ---
 
-# 🔀 $unionWith: Collection Merging Performance (Part 1)
-
-```
+# 🔀 $unionWith: Collection Merging Performance (Part 2)
 
 ### Advanced $unionWith Patterns
 ```javascript
@@ -592,11 +540,6 @@ db.sales.aggregate([
         sources: { $addToSet: "$source" }
     }}
 ]
-
----
-
-# 🔀 $unionWith: Collection Merging Performance (Part 3)
-
 ```
 
 ---
@@ -644,17 +587,11 @@ db.sales.aggregate([
 }}
 
 // Total memory = salesSummary memory + priceDistribution memory + dailyTrends memory
-
----
-
-# 🎭 $facet: Multi-Pipeline Performance (Part 2)
-
 ```
 
 ---
-# 📊 $bucket & $bucketAuto: Data Distribution Analysis
 
-# 📊 $bucket & $bucketAuto: Data Distribution Analysis
+# 📊 $bucket & $bucketAuto: Data Distribution Analysis (Part 1)
 
 ## Efficient Data Segmentation
 
@@ -673,12 +610,12 @@ db.sales.aggregate([
 }}
 
 // Index needed: { price: 1 }
+```
 
 ---
 
-# 📊 $bucket & $bucketAuto: Data Distribution Analysis (Part 1)
+# 📊 $bucket & $bucketAuto: Data Distribution Analysis (Part 2)
 
-```
 
 ### $bucketAuto for Dynamic Distribution
 ```javascript
@@ -698,17 +635,10 @@ db.sales.aggregate([
 // 1. Automatically distributes data evenly across buckets
 // 2. No need to know data distribution beforehand
 // 3. Handles outliers gracefully
-
----
-
-# 📊 $bucket & $bucketAuto: Data Distribution Analysis (Part 3)
-
 ```
 
 ---
-# 🎲 $sample: Random Sampling Performance
-
-# 🎲 $sample: Random Sampling Performance
+# 🎲 $sample: Random Sampling Performance (Part 1)
 
 ## Efficient Random Data Selection
 
@@ -729,12 +659,10 @@ db.sales.aggregate([
 
 // MEMORY EFFICIENT: $sample is always streaming
 // Doesn't load entire collection into memory
-
+```
 ---
 
-# 🎲 $sample: Random Sampling Performance (Part 1)
-
-```
+# 🎲 $sample: Random Sampling Performance (Part 2)
 
 ### $sample Optimization Patterns
 ```javascript
@@ -752,17 +680,11 @@ db.sales.aggregate([
     { $facet: { /* complex analysis */ } },
     { $sample: { size: 10000 } }          // Sample at the end - wasteful!
 ]
-
----
-
-# 🎲 $sample: Random Sampling Performance (Part 3)
-
 ```
 
 ---
-# 🔍 $search & $searchMeta: Atlas Search Performance
 
-# 🔍 $search & $searchMeta: Atlas Search Performance
+# 🔍 $search & $searchMeta: Atlas Search Performance (Part 1)
 
 ## Atlas Search Integration Optimization
 
@@ -791,12 +713,12 @@ db.sales.aggregate([
 // 2. Query complexity (compound queries slower than simple text)
 // 3. Result set size (use limit!)
 // 4. Highlighting and scoring requirements
+```
 
 ---
 
-# 🔍 $search & $searchMeta: Atlas Search Performance (Performance)
+# 🔍 $search & $searchMeta: Atlas Search Performance (Part 2)
 
-```
 
 ### $searchMeta for Performance Analysis
 ```javascript
@@ -814,9 +736,8 @@ db.sales.aggregate([
 ```
 
 ---
-# 🌍 $geoNear: Geospatial Query Performance
 
-# 🌍 $geoNear: Geospatial Query Performance
+# 🌍 $geoNear: Geospatial Query Performance (Part 1)
 
 ## Efficient Location-Based Aggregation
 
@@ -840,12 +761,10 @@ db.sales.aggregate([
 // 2. Include query filters to reduce candidate set  
 // 3. Limit results to reasonable number
 // 4. Consider multiple smaller queries vs one large query
-
+```
 ---
 
-# 🌍 $geoNear: Geospatial Query Performance (Part 1)
-
-```
+# 🌍 $geoNear: Geospatial Query Performance (Part 2)
 
 ### Advanced Geospatial Patterns
 ```javascript
@@ -876,17 +795,11 @@ db.sales.aggregate([
         avgDistance: { $avg: "$distanceKm" }
     }}
 ]
-
----
-
-# 🌍 $geoNear: Geospatial Query Performance (Part 3)
-
 ```
 
 ---
-# 🔒 $redact: Document-Level Security & Filtering
 
-# 🔒 $redact: Document-Level Security & Filtering
+# 🔒 $redact: Document-Level Security & Filtering (Part 1)
 
 ## Conditional Document Processing
 
@@ -913,12 +826,10 @@ db.sales.aggregate([
 // 2. Complex conditions can be expensive
 // 3. Consider $match for simple filters before $redact
 // 4. Use for security/access control scenarios
-
+```
 ---
 
-# 🔒 $redact: Document-Level Security & Filtering (Part 1)
-
-```
+# 🔒 $redact: Document-Level Security & Filtering (Part 2)
 
 ### Advanced $redact Security Patterns
 ```javascript
@@ -942,17 +853,11 @@ db.sales.aggregate([
         else: "$$PRUNE"  // Classified documents hidden
     }
 }}
-
----
-
-# 🔒 $redact: Document-Level Security & Filtering (Part 3)
-
 ```
 
 ---
-# 📤 $out & $merge: Output Operations Performance
 
-# 📤 $out & $merge: Output Operations Performance
+# 📤 $out & $merge: Output Operations Performance (Part 1)
 
 ## Efficient Result Persistence
 
@@ -970,12 +875,11 @@ db.sales.aggregate([
 
 // GOOD for: Periodic full refreshes, ETL processes
 // BAD for: Incremental updates, high-frequency operations
+```
 
 ---
 
-# 📤 $out & $merge: Output Operations Performance (Part 1)
-
-```
+# 📤 $out & $merge: Output Operations Performance (Part 2)
 
 ### $merge: Sophisticated Upsert Operations
 ```javascript
@@ -1000,15 +904,9 @@ db.sales.aggregate([
     ],
     whenNotMatched: "insert"
 }}
-
----
-
-# 📤 $out & $merge: Output Operations Performance (Part 3)
-
 ```
 
 ---
-# 🪟 $setWindowFields: Advanced Analytics Functions
 
 # 🪟 $setWindowFields: Advanced Analytics Functions
 
@@ -1046,17 +944,11 @@ db.sales.aggregate([
 }}
 
 // Required indexes: { customerId: 1, orderDate: 1 }
-
----
-
-# 🪟 $setWindowFields: Advanced Analytics Functions (Part 2)
-
 ```
 
 ---
-# 📈 $densify & $fill: Time Series Data Completion
 
-# 📈 $densify & $fill: Time Series Data Completion
+# 📈 $densify & $fill: Time Series Data Completion (Part 1)
 
 ## MongoDB 6.0+ Time Series Enhancements
 
@@ -1081,12 +973,11 @@ db.sales.aggregate([
 // 2. Use narrow time ranges when possible
 // 3. Consider impact on subsequent pipeline stages
 // 4. Useful for regular reporting intervals
+```
 
 ---
 
-# 📈 $densify & $fill: Time Series Data Completion (Part 1)
-
-```
+# 📈 $densify & $fill: Time Series Data Completion (Part 2)
 
 ### $fill: Value Interpolation
 ```javascript
@@ -1106,15 +997,9 @@ db.sales.aggregate([
     { $densify: { /* create missing time points */ } },
     { $fill: { /* interpolate missing values */ } }
 ]
-
----
-
-# 📈 $densify & $fill: Time Series Data Completion (Part 3)
-
 ```
 
 ---
-# 🎯 Advanced Pipeline Optimization Strategies
 
 # 🎯 Advanced Pipeline Optimization Strategies
 
@@ -1152,17 +1037,11 @@ db.sales.aggregate([
     { $limit: 100 },
     { $merge: { into: "quarterly_results" } }
 ]
-
----
-
-# 🎯 Advanced Pipeline Optimization Strategies (Part 2)
-
 ```
 
 ---
-# 🧠 Memory Management Across All Operators
 
-# 🧠 Memory Management Across All Operators
+# 🧠 Memory Management Across All Operators  (Part 1)
 
 ## Operator-Specific Memory Patterns
 
@@ -1186,14 +1065,14 @@ db.sales.aggregate([
 // 3. $sort without index support
 { $sort: { calculatedField: -1 } }  // No index available
 // Memory: Up to 100MB limit, then spills to disk
+```
 
 ---
 
 # 🧠 Memory Management Across All Operators (Part 2)
 
-```
-
 ### Memory-Efficient Operators (Safe for Large Data)
+
 ```javascript
 // Streaming operators - process one document at a time:
 { $match: { ... } }           // No memory accumulation
@@ -1206,7 +1085,6 @@ db.sales.aggregate([
 ```
 
 ---
-# 📊 Performance Monitoring for All Operators
 
 # 📊 Performance Monitoring for All Operators
 
@@ -1234,15 +1112,11 @@ explanation.stages.forEach((stage, index) => {
     console.log(`  Index Used: ${stage.executionStats?.indexName || 'None'}`);
     console.log(`  Memory Usage: ${stage.executionStats?.memUsage || 'N/A'}`);
 });
-
----
-
-# 📊 Performance Monitoring for All Operators (Part 2)
-
 ```
 
 ---
-# 🏆 Production-Ready Optimization Checklist
+
+# 🏆 Production-Ready Optimization Checklist  (Part 1)
 
 ## Complete Operator Optimization Audit
 
@@ -1297,7 +1171,6 @@ explanation.stages.forEach((stage, index) => {
 - [ ] Monitor **upgraded TCMalloc** performance improvements
 
 ---
-# 🚀 Real-World Complete Pipeline Examples
 
 # 🚀 Real-World Complete Pipeline Examples
 
@@ -1423,16 +1296,11 @@ db.orders.aggregate([
     maxTimeMS: 300000    // 5-minute timeout for complex analysis
 })
 
----
-
-# 🚀 Real-World Complete Pipeline Examples (Part 2)
-
 ```
 
 ---
-# 🎉 Complete Operator Mastery: Key Takeaways
 
-# 🎉 Complete Operator Mastery: Key Takeaways
+# 🎉 Complete Operator Mastery: Key Takeawayss (Part 1)
 
 ## Essential Principles for Every Operator
 
@@ -1486,9 +1354,8 @@ Every operator benefits from proper indexing:
 You now have comprehensive mastery of every MongoDB aggregation operator! 🎯
 
 ---
-# 🧠 Advanced Pipeline Memory Management
 
-# 🧠 Advanced Pipeline Memory Management
+# 🧠 Advanced Pipeline Memory Management (Part 1)
 
 ## Resource Optimization Strategies
 
@@ -1514,12 +1381,11 @@ db.orders.aggregate([
     totalSpent: {$sum: "$items.price"}
   }}
 ])
+```
 
 ---
 
 # 🧠 Advanced Pipeline Memory Management (Part 2)
-
-```
 
 **Optimization Techniques**
 - Early filtering with $match
@@ -1528,9 +1394,8 @@ db.orders.aggregate([
 - Pipeline segmentation for large operations
 
 ---
-# 🔧 Error Handling and Robustness
 
-# 🔧 Error Handling and Robustness
+# 🔧 Error Handling and Robustness (Part 1)
 
 ## Building Resilient Production Pipelines
 
@@ -1554,12 +1419,12 @@ db.collection.aggregate([
     }
   }}
 ])
+```
 
 ---
 
 # 🔧 Error Handling and Robustness (Part 2)
 
-```
 
 **Resource Constraint Management**
 - Enable `allowDiskUse` for large operations
@@ -1574,9 +1439,8 @@ db.collection.aggregate([
 - Automated alerting systems
 
 ---
-# 🚀 Production Deployment Strategies
 
-# 🚀 Production Deployment Strategies
+# 🚀 Production Deployment Strategies (Part 1)
 
 ## Operational Excellence for Analytics
 
@@ -1594,12 +1458,11 @@ const testPipeline = [
 const startTime = new Date()
 const result = db.collection.aggregate(testPipeline)
 const duration = new Date() - startTime
+```
 
 ---
 
-# 🚀 Production Deployment Strategies (Performance)
-
-```
+# 🚀 Production Deployment Strategies (Part 2)
 
 **Deployment Process**
 1. **Staging validation** with production-like data
@@ -1620,9 +1483,8 @@ const duration = new Date() - startTime
 - Business impact measurement
 
 ---
-# 📊 Performance Testing Framework
 
-# 📊 Performance Testing Framework
+# 📊 Performance Testing Framework (Part 1)
 
 ## Systematic Optimization Validation
 
@@ -1646,12 +1508,12 @@ testConfigurations.forEach(config => {
   const result = benchmarkPipeline(config.pipeline)
   console.log(`${config.name}: ${result.duration}ms`)
 })
+```
 
 ---
 
-# 📊 Performance Testing Framework (Performance)
+# 📊 Performance Testing Framework (Part 2)
 
-```
 
 **Performance Metrics**
 - Execution time per document
@@ -1673,9 +1535,8 @@ testConfigurations.forEach(config => {
 - Performance trend analysis
 
 ---
-# 🌐 Cross-Platform Optimization
 
-# 🌐 Cross-Platform Optimization
+# 🌐 Cross-Platform Optimization (Part 1)
 
 ## Multi-Environment Performance Strategies
 
@@ -1693,12 +1554,11 @@ db.collection.aggregate([
     count: {$sum: 1}            // Simple accumulator
   }}
 ])
+```
 
 ---
 
 # 🌐 Cross-Platform Optimization (Part 2)
-
-```
 
 **Environment-Specific Tuning**
 - **Cloud environments**: Variable performance optimization
@@ -1719,9 +1579,8 @@ db.collection.aggregate([
 - Cross-region aggregation patterns
 
 ---
-# 🔗 Application Integration Patterns
 
-# 🔗 Application Integration Patterns
+# 🔗 Application Integration Patterns (Part 1)
 
 ## Connecting Analytics with Architecture
 
@@ -1749,12 +1608,11 @@ class AnalyticsService {
     ])
   }
 }
+```
 
 ---
 
 # 🔗 Application Integration Patterns (Part 2)
-
-```
 
 **Caching Strategies**
 - Result caching for expensive operations
@@ -1775,9 +1633,8 @@ class AnalyticsService {
 - Event sourcing patterns
 
 ---
-# 🏆 Advanced Optimization Techniques
 
-# 🏆 Advanced Optimization Techniques
+# 🏆 Advanced Optimization Techniques (Part 1)
 
 ## Expert-Level Performance Strategies
 
@@ -1798,12 +1655,11 @@ db.collection.aggregate([
   allowDiskUse: true,            // Large dataset handling
   maxTimeMS: 30000               // Timeout protection
 })
+```
 
 ---
 
 # 🏆 Advanced Optimization Techniques (Part 2)
-
-```
 
 **Advanced Index Strategies**
 - Covering indexes for pipeline stages
@@ -1822,60 +1678,6 @@ db.collection.aggregate([
 - Multi-collection processing
 - Distributed computing patterns
 - Load balancing strategies
-
----
-# 🔮 Future of Aggregation
-
-# 🔮 Future of Aggregation
-
-## Emerging Trends and Opportunities
-
-**Machine Learning Integration**
-```javascript
-// ML-enhanced aggregation (conceptual)
-db.userBehavior.aggregate([
-  {$match: {userId: {$in: targetUsers}}},
-  {$mlPredict: {                    // Future ML operator
-    model: "userChurnPrediction",
-    features: ["loginFrequency", "purchaseHistory"],
-    as: "churnProbability"
-  }},
-  {$sort: {churnProbability: -1}},
-  {$limit: 100}
-])
-```
-
----
-
-# 🔮 Future of Aggregation (Part 1)
-
-**Streaming Analytics Evolution**
-- Real-time pipeline processing
-- Event stream integration
-- Low-latency analytical workflows
-- Continuous computation patterns
-
-**Columnar Processing**
-- Column-oriented aggregation optimization
-- Analytical workload acceleration
-- Compression and encoding improvements
-- Vector processing capabilities
-
-**Edge Computing Analytics**
-- Resource-constrained optimization
-- Distributed processing coordination
-- Network-aware pipeline design
-- Local computation strategies
-
----
-
-# 🔮 Future of Aggregation (Performance)
-
-**Automated Optimization**
-- AI-driven pipeline optimization
-- Performance prediction models
-- Automatic index recommendations
-- Self-tuning aggregation systems
 
 ---
 # 📚 Complete Operator Reference & Resources
@@ -1899,4 +1701,4 @@ db.userBehavior.aggregate([
 - [Aggregation Pipeline Optimization](https://docs.mongodb.com/manual/core/aggregation-pipeline-optimization/)
 - [Version-Specific Release Notes](https://docs.mongodb.com/manual/release-notes/)
 
-**Master every operator. Optimize every pipeline. Scale every application.** 🚀
+**Master every operator. Optimize every pipeline. Scale every service you have!** 🚀
