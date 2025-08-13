@@ -17,12 +17,29 @@
         .slide {
             min-height: 100vh;
             padding: 40px;
+            padding-top: 80px;
             box-sizing: border-box;
             position: relative;
+            opacity: 1;
+            transform: translateX(0) scale(1);
+            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+        }
+        
+        .slide.fade-out {
+            opacity: 0;
+            transform: translateX(0) scale(0.95);
+        }
+        
+        .slide.slide-left {
+            transform: translateX(-100%) scale(0.95);
+        }
+        
+        .slide.slide-right {
+            transform: translateX(100%) scale(0.95);
         }
         
         .slide-content {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
         }
         
@@ -134,6 +151,91 @@
             z-index: 1000;
         }
         
+        /* Slide Title Dropdown */
+        .slide-dropdown {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(30, 30, 30, 0.95);
+            padding: 12px 15px;
+            border-radius: 8px;
+            z-index: 1000;
+            min-width: 450px;
+            max-width: 600px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(97, 218, 251, 0.2);
+            backdrop-filter: blur(10px);
+            animation: slideInLeft 0.3s ease-out;
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .slide-dropdown select {
+            width: 100%;
+            background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+            color: #ffffff;
+            border: 2px solid #61dafb;
+            border-radius: 6px;
+            padding: 10px 12px;
+            font-size: 0.9em;
+            cursor: pointer;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            transition: all 0.2s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2361dafb' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 40px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .slide-dropdown select:hover {
+            border-color: #4fa8c5;
+            box-shadow: 0 0 0 3px rgba(97, 218, 251, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        .slide-dropdown select:focus {
+            outline: none;
+            border-color: #4fa8c5;
+            box-shadow: 0 0 0 3px rgba(97, 218, 251, 0.2);
+            transform: translateY(-1px);
+        }
+        
+        .slide-dropdown select option {
+            background: #2d2d2d;
+            color: #ffffff;
+            padding: 8px 12px;
+            border: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+        
+        .slide-dropdown select option:hover {
+            background: #61dafb;
+            color: #1e1e1e;
+        }
+        
+        .slide-dropdown select option:checked {
+            background: linear-gradient(135deg, #61dafb 0%, #4fa8c5 100%);
+            color: #1e1e1e;
+            font-weight: bold;
+        }
+        
         .slide-nav button {
             background: #61dafb;
             color: #1e1e1e;
@@ -152,6 +254,7 @@
         @media (max-width: 768px) {
             .slide {
                 padding: 20px;
+                padding-top: 120px;
             }
             
             h1 {
@@ -167,13 +270,32 @@
                 text-align: center;
                 margin-bottom: 20px;
             }
+            
+            .slide-dropdown {
+                position: static;
+                margin: 20px;
+                min-width: auto;
+                max-width: calc(100vw - 40px);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            }
+            
+            .slide-dropdown select {
+                font-size: 1em;
+                padding: 12px 16px;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="slide-dropdown">
+        <select id="slide-selector" onchange="goToSlide(parseInt(this.value))">
+            <option value="">Loading slides...</option>
+        </select>
+    </div>
+    
     <div class="slide-nav">
         <button onclick="previousSlide()">←</button>
-        <span id="slide-counter">1</span>
+        <input type="number" id="slide-counter" value="1" min="1" onchange="goToSlide(this.value - 1 )" style="width: 60px; text-align: center; background: #2d2d2d; color: #ffffff; border: 1px solid #61dafb; border-radius: 3px; padding: 5px; margin: 0 5px;">
         <button onclick="nextSlide()">→</button>
     </div>
     
@@ -185,13 +307,98 @@
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
         
-        function showSlide(n) {
-            const slides = document.querySelectorAll('.slide');
-            slides.forEach((slide, index) => {
-                slide.style.display = index === n ? 'block' : 'none';
-            });
-            document.getElementById('slide-counter').textContent = n + 1;
+        function getSlideCount() {
+            return document.querySelectorAll('.slide').length;
+        }
+        function goToSlide(n) {
+            console.log('goToSlide', n);
             currentSlide = n;
+            showSlide(n);
+        }
+        
+        function populateSlideDropdown() {
+            const selector = document.getElementById('slide-selector');
+            const slides = document.querySelectorAll('.slide');
+            
+            // Clear existing options
+            selector.innerHTML = '';
+            
+            slides.forEach((slide, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                
+                // Try to get slide title from h1, h2, or first text content
+                const h1 = slide.querySelector('h1');
+                const h2 = slide.querySelector('h2');
+                const h3 = slide.querySelector('h3');
+                
+                let title = '';
+                if (h1) {
+                    title = h1.textContent.trim();
+                } else if (h2) {
+                    title = h2.textContent.trim();
+                } else if (h3) {
+                    title = h3.textContent.trim();
+                } else {
+                    // Fallback: get first paragraph or any text content
+                    const firstText = slide.querySelector('p, li, div');
+                    title = firstText ? firstText.textContent.trim().substring(0, 50) + '...' : 'Slide ' + (index + 1);
+                }
+                
+                // Clean up title (remove emojis and extra spaces)
+                title = title.replace(/[^\w\s\-\(\)]/g, '').trim();
+                if (!title || title.length < 3) {
+                    title = 'Slide ' + (index + 1);
+                }
+                
+                // Truncate very long titles to prevent wrapping
+                if (title.length > 60) {
+                    title = title.substring(0, 57) + '...';
+                }
+                
+                option.textContent = (index + 1) + '. ' + title;
+                selector.appendChild(option);
+            });
+        }
+
+        function showSlide(n) {
+            console.log('showSlide', n);
+            const slides = document.querySelectorAll('.slide');
+            const currentSlideElement = slides[currentSlide];
+            const targetSlideElement = slides[n];
+            
+            // Determine transition direction
+            const direction = n > currentSlide ? 'right' : 'left';
+            
+            // Fade out current slide with directional movement
+            if (currentSlideElement && currentSlide !== n) {
+                currentSlideElement.classList.add('fade-out');
+                currentSlideElement.classList.add(direction === 'right' ? 'slide-left' : 'slide-right');
+            }
+            
+            // Prepare target slide
+            if (targetSlideElement) {
+                targetSlideElement.style.display = 'block';
+                targetSlideElement.classList.add(direction === 'right' ? 'slide-right' : 'slide-left');
+                targetSlideElement.classList.remove('fade-out');
+            }
+            
+            // After fade out, switch slides and fade in
+            setTimeout(() => {
+                slides.forEach((slide, index) => {
+                    if (index === n) {
+                        slide.style.display = 'block';
+                        slide.classList.remove('fade-out', 'slide-left', 'slide-right');
+                    } else {
+                        slide.style.display = 'none';
+                        slide.classList.remove('fade-out', 'slide-left', 'slide-right');
+                    }
+                });
+                
+                document.getElementById('slide-counter').value = n + 1;
+                document.getElementById('slide-selector').value = n;
+                currentSlide = n;
+            }, 200); // Half of the transition duration
         }
         
         function nextSlide() {
@@ -225,22 +432,41 @@
             const container = document.getElementById('slides-container');
             const content = container.innerHTML;
             
-            // Split by our custom slide separator (Pandoc converts ---SLIDE--- to <p>—SLIDE—</p>)
-            const slideParts = content.split(/<p>—SLIDE—<\/p>/);
+            // Split by slide separators - handle both base HTML (h1) and speaker/published (—SLIDE—) formats
+            let slideParts;
+            if (content.includes('—SLIDE—')) {
+                // Speaker/published format with explicit slide separators
+                slideParts = content.split(/<p>—SLIDE—<\/p>/);
+            } else {
+                // Base HTML format - split by h1 elements
+                slideParts = content.split(/<h1[^>]*>/);
+                // Add back the h1 tags to each part except the first
+                for (let i = 1; i < slideParts.length; i++) {
+                    slideParts[i] = '<h1>' + slideParts[i];
+                }
+            }
             const slides = [];
             
             slideParts.forEach((slideContent, index) => {
                 if (slideContent.trim()) {
-                    const slideDiv = document.createElement('div');
-                    slideDiv.className = 'slide';
-                    slideDiv.style.display = index === 0 ? 'block' : 'none';
+                    // Check if this is an empty slide (just contains empty h1 or section)
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = slideContent;
+                    const hasContent = tempDiv.textContent.trim().length > 0 && 
+                                     !tempDiv.innerHTML.match(/<h1[^>]*id="section[^"]*"[^>]*>\s*<\/h1>/);
                     
-                    const slideContentDiv = document.createElement('div');
-                    slideContentDiv.className = 'slide-content';
-                    slideContentDiv.innerHTML = slideContent;
-                    
-                    slideDiv.appendChild(slideContentDiv);
-                    slides.push(slideDiv);
+                    if (hasContent) {
+                        const slideDiv = document.createElement('div');
+                        slideDiv.className = 'slide';
+                        slideDiv.style.display = slides.length === 0 ? 'block' : 'none';
+                        
+                        const slideContentDiv = document.createElement('div');
+                        slideContentDiv.className = 'slide-content';
+                        slideContentDiv.innerHTML = slideContent;
+                        
+                        slideDiv.appendChild(slideContentDiv);
+                        slides.push(slideDiv);
+                    }
                 }
             });
             
@@ -253,6 +479,10 @@
             
             // Initialize navigation with actual slide count
             window.totalSlides = slides.length;
+            
+            // Populate slide dropdown with titles
+            populateSlideDropdown();
+            
             showSlide(0);
         }
         
