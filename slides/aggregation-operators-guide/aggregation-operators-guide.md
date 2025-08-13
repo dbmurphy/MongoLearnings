@@ -6,9 +6,9 @@
 ---
 # 🎯 Complete Operator Coverage
 
-**Target Audience:** Node.js & Mongoose developers (all levels)
-**Duration:** ~90-120 minutes  
-**Format:** Comprehensive operator-by-operator performance analysis
+- **Target Audience:** Node.js & Mongoose developers (all levels)
+- **Duration:** ~90-120 minutes  
+- **Format:** Comprehensive operator-by-operator performance analysis
 
 ## What Makes This Guide Complete
 - **40+ Pipeline Operators** with performance characteristics
@@ -21,19 +21,19 @@
 # 📋 Complete Operator Reference
 
 ## Core Pipeline Operators (High-Impact)
-**Filtering & Matching:** `$match`, `$redact`, `$filter`
-**Joining & Lookups:** `$lookup`, `$graphLookup`, `$unionWith` 
-**Grouping & Aggregation:** `$group`, `$bucket`, `$bucketAuto`, `$count`
-**Sorting & Limiting:** `$sort`, `$limit`, `$skip`, `$sample`
-**Document Transformation:** `$project`, `$addFields`, `$set`, `$unset`, `$replaceRoot`, `$replaceWith`
+- **Filtering & Matching:** `$match`, `$redact`, `$filter`
+- **Joining & Lookups:** `$lookup`, `$graphLookup`, `$unionWith` 
+- **Grouping & Aggregation:** `$group`, `$bucket`, `$bucketAuto`, `$count`
+- **Sorting & Limiting:** `$sort`, `$limit`, `$skip`, `$sample`
+- **Document Transformation:** `$project`, `$addFields`, `$set`, `$unset`, `$replaceRoot`, `$replaceWith`
 
 ## Advanced Pipeline Operators
-**Array Processing:** `$unwind`, `$sortArray`, `$slice`
-**Multi-Pipeline:** `$facet`, `$lookup` (with pipeline)
-**Window Functions:** `$setWindowFields`, `$densify`, `$fill`
-**Geospatial:** `$geoNear`, `$geoWithin`
-**Text & Search:** `$search`, `$searchMeta` (Atlas only)
-**Output Operations:** `$out`, `$merge`
+- **Array Processing:** `$unwind`, `$sortArray`, `$slice`
+- **Multi-Pipeline:** `$facet`, `$lookup` (with pipeline)
+- **Window Functions:** `$setWindowFields`, `$densify`, `$fill`
+- **Geospatial:** `$geoNear`, `$geoWithin`
+- **Text & Search:** `$search`, `$searchMeta` (Atlas only)
+- **Output Operations:** `$out`, `$merge`
 
 ---
 # 🏗️ Aggregation Pipeline Architecture Deep Dive
@@ -1305,6 +1305,7 @@ db.orders.aggregate([
 ## Essential Principles for Every Operator
 
 ### 1. **Index Strategy is Universal**
+
 Every operator benefits from proper indexing:
 - **$match, $sort, $group:** Direct index usage
 - **$lookup, $graphLookup:** Foreign field indexing
@@ -1312,6 +1313,7 @@ Every operator benefits from proper indexing:
 - **$bucket, $setWindowFields:** GroupBy/partitionBy indexing
 
 ### 2. **Memory Management Scales by Operator Type**
+
 - **Streaming:** $match, $project, $addFields, $replaceRoot, $limit
 - **Accumulating:** $group, $bucket, $facet, $sort
 - **Joining:** $lookup, $graphLookup, $unionWith
@@ -1321,11 +1323,13 @@ Every operator benefits from proper indexing:
 # 🎉 Complete Operator Mastery: Key Takeaways (Part 2)
 
 ### 3. **Pipeline Position Matters for Every Operator**
+
 - **Early:** $match, $sample, $limit (reduce dataset)
 - **Middle:** $addFields, $project, $lookup (transform and join)
 - **Late:** $group, $facet, $sort, $out/$merge (aggregate and output)
 
 ### 4. **Version Features Provide Real Performance Gains**
+
 - **MongoDB 6.0:** topN/bottomN, sharded lookups, time series operators
 - **MongoDB 7.0:** Enhanced slot-based execution, better query planning
 - **MongoDB 8.0:** Block processing, improved memory management
@@ -1360,6 +1364,7 @@ You now have comprehensive mastery of every MongoDB aggregation operator! 🎯
 ## Resource Optimization Strategies
 
 **Memory Accumulation Patterns**
+
 - Documents grow through pipeline stages
 - $unwind operations multiply document count
 - $lookup operations add joined data
@@ -1388,6 +1393,7 @@ db.orders.aggregate([
 # 🧠 Advanced Pipeline Memory Management (Part 2)
 
 **Optimization Techniques**
+
 - Early filtering with $match
 - Strategic field removal with $unset
 - Controlled array processing
@@ -1427,12 +1433,14 @@ db.collection.aggregate([
 
 
 **Resource Constraint Management**
+
 - Enable `allowDiskUse` for large operations
 - Implement timeout handling
 - Design fallback strategies
 - Monitor memory usage patterns
 
 **Production Monitoring**
+
 - Stage-by-stage performance tracking
 - Error rate monitoring
 - Data quality validation
@@ -1465,18 +1473,21 @@ const duration = new Date() - startTime
 # 🚀 Production Deployment Strategies (Part 2)
 
 **Deployment Process**
+
 1. **Staging validation** with production-like data
 2. **Performance baselines** establishment
 3. **Gradual rollout** with monitoring
 4. **Rollback procedures** for issues
 
 **Capacity Planning**
+
 - Memory usage projections
 - CPU utilization estimates
 - Storage growth planning
 - Network bandwidth requirements
 
 **Operational Monitoring**
+
 - Real-time performance metrics
 - Resource utilization tracking
 - Error rate monitoring
@@ -1516,6 +1527,7 @@ testConfigurations.forEach(config => {
 
 
 **Performance Metrics**
+
 - Execution time per document
 - Memory usage patterns
 - CPU utilization rates
@@ -1523,12 +1535,14 @@ testConfigurations.forEach(config => {
 - Network I/O measurements
 
 **Scalability Testing**
+
 - Document volume scaling
 - Concurrent pipeline execution
 - Resource contention analysis
 - Breaking point identification
 
 **Regression Detection**
+
 - Automated performance monitoring
 - Baseline comparison
 - Alert thresholds
@@ -1561,18 +1575,21 @@ db.collection.aggregate([
 # 🌐 Cross-Platform Optimization (Part 2)
 
 **Environment-Specific Tuning**
+
 - **Cloud environments**: Variable performance optimization
 - **On-premise**: Consistent resource utilization
 - **Container deployments**: Resource constraint handling
 - **Edge computing**: Limited resource strategies
 
 **MongoDB Configuration**
+
 - Cache size optimization for aggregation workloads
 - Concurrency settings for pipeline execution
 - Memory allocation for blocking operations
 - Index building strategies
 
 **Multi-Region Considerations**
+
 - Data locality optimization
 - Network latency management
 - Read preference strategies
@@ -1615,18 +1632,21 @@ class AnalyticsService {
 # 🔗 Application Integration Patterns (Part 2)
 
 **Caching Strategies**
+
 - Result caching for expensive operations
 - Incremental updates for evolving datasets
 - Cache invalidation strategies
 - Memory-efficient caching patterns
 
 **API Design**
+
 - Parameterized aggregation endpoints
 - Streaming for large result sets
 - Error handling for analytical operations
 - Rate limiting for resource-intensive queries
 
 **Event-Driven Analytics**
+
 - Trigger-based pipeline execution
 - Real-time data processing
 - Streaming analytics integration
@@ -1662,18 +1682,21 @@ db.collection.aggregate([
 # 🏆 Advanced Optimization Techniques (Part 2)
 
 **Advanced Index Strategies**
+
 - Covering indexes for pipeline stages
 - Partial indexes for filtered aggregations
 - Compound indexes spanning multiple stages
 - Index intersection optimization
 
 **Memory Pool Management**
+
 - Pipeline segmentation for large operations
 - Resource sharing across concurrent pipelines
 - Memory allocation optimization
 - Garbage collection considerations
 
 **Parallel Processing Design**
+
 - $facet parallelism utilization
 - Multi-collection processing
 - Distributed computing patterns
@@ -1684,17 +1707,17 @@ db.collection.aggregate([
 
 ## Quick Reference by Use Case
 
-**Data Filtering:** $match, $redact, $sample  
-**Document Transformation:** $project, $addFields, $set, $unset, $replaceRoot, $replaceWith  
-**Array Processing:** $unwind, $sortArray  
-**Joining & Lookups:** $lookup, $graphLookup, $unionWith  
-**Grouping & Analysis:** $group, $bucket, $bucketAuto, $count  
-**Sorting & Limiting:** $sort, $limit, $skip, $topN, $bottomN, $firstN, $lastN  
-**Multi-Pipeline:** $facet  
-**Window Functions:** $setWindowFields, $densify, $fill  
-**Geospatial:** $geoNear  
-**Text Search:** $search, $searchMeta (Atlas)  
-**Output Operations:** $out, $merge  
+- **Data Filtering:** $match, $redact, $sample  
+- **Document Transformation:** $project, $addFields, $set, $unset, $replaceRoot, $replaceWith  
+- **Array Processing:** $unwind, $sortArray  
+- **Joining & Lookups:** $lookup, $graphLookup, $unionWith  
+- **Grouping & Analysis:** $group, $bucket, $bucketAuto, $count  
+- **Sorting & Limiting:** $sort, $limit, $skip, $topN, $bottomN, $firstN, $lastN  
+- **Multi-Pipeline:** $facet  
+- **Window Functions:** $setWindowFields, $densify, $fill  
+- **Geospatial:** $geoNear  
+- **Text Search:** $search, $searchMeta (Atlas)  
+- **Output Operations:** $out, $merge  
 
 ## MongoDB Documentation Links
 - [Complete Aggregation Operators Reference](https://docs.mongodb.com/manual/reference/operator/aggregation/)

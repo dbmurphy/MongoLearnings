@@ -11,9 +11,9 @@ This comprehensive field guide covers MongoDB indexing and query optimization fo
 
 ## 🎯 Presentation Overview
 
-**Target Audience:** Node.js & Mongoose developers  
-**Duration:** ~70-85 minutes (with Q&A)
-**Format:** Technical deep-dive with practical examples and critical anti-patterns
+- **Target Audience:** Node.js & Mongoose developers  
+- **Duration:** ~70-85 minutes (with Q&A)
+- **Format:** Technical deep-dive with practical examples and critical anti-patterns
 
 ### Topics Covered:
 - MongoDB query optimizer internals

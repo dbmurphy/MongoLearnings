@@ -7,9 +7,9 @@
 - Importing PPTX files through Google Slides first
 - Using the base PPTX version which has better compatibility
 
-**Target Audience:** Node.js & Mongoose developers (all levels)  
-**Duration:** ~90-120 minutes (with Q&A)  
-**Format:** Complete operator-by-operator performance analysis with real-world optimization
+- **Target Audience:** Node.js & Mongoose developers (all levels)  
+- **Duration:** ~90-120 minutes (with Q&A)  
+- **Format:** Complete operator-by-operator performance analysis with real-world optimization
 
 ## 🎯 Complete Operator Coverage
 
@@ -18,28 +18,33 @@ This comprehensive guide covers **every major MongoDB aggregation operator** wit
 ### 🔧 Core Pipeline Operators (40+ Covered)
 
 #### **Filtering & Selection Operations**
+
 - **$match** - Query optimization, index usage, compound filters
 - **$redact** - Document-level security and conditional filtering  
 - **$sample** - Random sampling algorithms and performance characteristics
 - **$limit/$skip** - Result pagination and early termination strategies
 
 #### **Document Transformation Operations**
+
 - **$project** - Field selection, computed fields, memory optimization
 - **$addFields/$set** - Field enhancement and pipeline positioning
 - **$unset** - Field removal for memory efficiency
 - **$replaceRoot/$replaceWith** - Document restructuring patterns
 
 #### **Array Processing Operations**
+
 - **$unwind** - Array expansion, memory impact, optimization strategies
 - **$sortArray** - In-document array sorting
 - **$slice** - Array subsetting for performance
 
 #### **Joining & Lookup Operations**
+
 - **$lookup** - Join optimization, index requirements, pipeline syntax
 - **$graphLookup** - Recursive traversal, depth limiting, memory management
 - **$unionWith** - Multi-collection merging, schema alignment
 
 #### **Aggregation & Analysis Operations**
+
 - **$group** - Memory-efficient grouping, accumulator optimization
 - **$bucket/$bucketAuto** - Data distribution analysis, boundary optimization
 - **$count** - Document counting with performance considerations
@@ -50,30 +55,36 @@ This comprehensive guide covers **every major MongoDB aggregation operator** wit
 - **Memory management** for large sorts and compound sorting
 
 #### **Advanced Analytics Operations**
+
 - **$setWindowFields** - Window functions, partitioning, frame optimization
 - **$densify/$fill** - Time series gap filling and interpolation
 - **$facet** - Multi-pipeline execution, memory allocation strategies
 
 #### **Geospatial Operations**
+
 - **$geoNear** - Location-based queries, distance calculations, indexing
 - **Geospatial optimization** for large coordinate datasets
 
 #### **Search Operations (Atlas)**
+
 - **$search/$searchMeta** - Full-text search optimization, index design
 - **Atlas Search** performance tuning and query planning
 
 #### **Output Operations**
+
 - **$out** - Complete collection replacement strategies
 - **$merge** - Sophisticated upsert patterns, incremental updates
 
 ### 🚀 Performance Deep Dives
 
 #### **Memory Management by Operator Type**
+
 - **Streaming operators** (memory-efficient): $match, $project, $addFields, $replaceRoot, $limit
 - **Blocking operators** (memory-intensive): $group, $sort, $bucket, $facet, $lookup
 - **Memory optimization strategies** for each operator category
 
 #### **Index Strategy for Every Operator**
+
 - Direct index usage: $match, $sort, $group
 - Foreign field indexing: $lookup, $graphLookup  
 - Specialized indexes: $geoNear (2dsphere), $search (text), $bucket (groupBy)
@@ -82,17 +93,20 @@ This comprehensive guide covers **every major MongoDB aggregation operator** wit
 #### **Version-Specific Performance Improvements**
 
 **MongoDB 6.0+ Features:**
+
 - **$topN/$bottomN** replacing $sort + $limit patterns
 - **Enhanced $lookup** with sharded collection support
 - **$densify/$fill** for time series data processing
 - **Improved $setWindowFields** capabilities
 
 **MongoDB 7.0+ Optimizations:**
+
 - **Enhanced slot-based execution** for $group operations
 - **Better query shape analysis** for plan caching
 - **Improved $search** performance on Atlas
 
 **MongoDB 8.0+ Performance Revolution:**
+
 - **Block processing** for time series collections (200% faster)
 - **Enhanced memory management** with upgraded TCMalloc
 - **Improved bulk operations** integration
@@ -227,11 +241,13 @@ build/aggregation-operators-guide/
 ## 🎯 Customization
 
 **For Different Audiences:**
+
 - **Beginners:** Focus on core operators ($match, $group, $project, $lookup)
 - **Intermediate:** Add advanced patterns and memory optimization
 - **Advanced:** Emphasize version-specific features and complex pipelines
 
 **For Different MongoDB Versions:**
+
 - **6.0+:** Highlight topN/bottomN and enhanced lookups
 - **7.0+:** Focus on slot-based execution improvements
 - **8.0+:** Emphasize block processing and memory enhancements

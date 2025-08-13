@@ -13,9 +13,9 @@ date: "2024"
 ---
 # 👋 About This Session
 
-**Target Audience:** Node.js & Mongoose developers (all levels)
+- **Target Audience:** Node.js & Mongoose developers (all levels)
 
-**What You'll Learn:**
+- **What You'll Learn:**
 - How MongoDB's query optimizer really works
 - Index types and when to use them
 - Query patterns that help/hurt performance
@@ -34,6 +34,7 @@ date: "2024"
     db.users.find({ email: "john@example.com" })
 
 **Performance Impact:**
+
 - 1M documents: ~1ms vs ~1000ms
 - 10M documents: ~1ms vs ~10,000ms
 - Linear growth vs logarithmic growth
@@ -69,6 +70,7 @@ The optimizer is **cost-based** and **learned** - it remembers what works!
 # 🔍 Query Optimizer: Stage 1 - Parsing (Field Usage Types)
 
 **Field Usage Types:**
+
 - **Equality**: `status: "active"`
 - **Range**: `age: { $gte: 25 }`
 - **Sort**: `sort({ lastLogin: -1 })`
@@ -85,6 +87,7 @@ The optimizer is **cost-based** and **learned** - it remembers what works!
     { status: 1, lastLogin: -1 }    // ESR pattern
 
 **Optimizer considers:**
+
 - **Field coverage** - Which fields can use index
 - **Selectivity** - How much data gets filtered out
 - **Sort efficiency** - Can index provide sort order
@@ -105,6 +108,7 @@ The optimizer is **cost-based** and **learned** - it remembers what works!
     //   E          S            R
 
 **Why ESR works:**
+
 1. **Equality** - Most selective, finds exact matches
 2. **Sort** - Provides sorted results without extra work
 3. **Range** - Filters remaining documents
@@ -140,7 +144,7 @@ The optimizer is **cost-based** and **learned** - it remembers what works!
     { city: "NYC" }               // Skips first fields
     { age: 25, city: "NYC" }      // Skips first field
 
-**Left-to-Right Rule:** Must use fields from left to right
+- **Left-to-Right Rule:** Must use fields from left to right
 
 ---
 # 🎨 Specialized Index Types
@@ -171,7 +175,7 @@ The optimizer is **cost-based** and **learned** - it remembers what works!
     // Optimal index:
     { status: 1, lastLogin: -1, age: 1 }
 
-**Key Principle:** Early pipeline stages can use indexes, later stages often can't
+- **Key Principle:** Early pipeline stages can use indexes, later stages often can't
 
 ---
 # 📈 Aggregation: $match and $sort Optimization
@@ -237,7 +241,7 @@ The optimizer is **cost-based** and **learned** - it remembers what works!
     // Each lookup becomes individual query!
     // 10,000 orders = 10,000 separate index lookups
 
-**Reality Check:** $lookup doesn't work like SQL JOINs
+- **Reality Check:** $lookup doesn't work like SQL JOINs
 
 ---
 # 🚨 $lookup: When It Goes Wrong
@@ -264,7 +268,7 @@ The optimizer is **cost-based** and **learned** - it remembers what works!
 ---
 # 🚨 $lookup: When It Goes Wrong (Performance)
 
-**Performance Impact:** O(n × m) instead of expected O(log n)
+- **Performance Impact:** O(n × m) instead of expected O(log n)
 
 ---
 # 📊 $lookup Performance Reality
@@ -301,7 +305,7 @@ The optimizer is **cost-based** and **learned** - it remembers what works!
       { $lookup: { ... } }                        // Then lookup
     ])
 
-**Key Strategy:** Filter and limit before lookup operations
+- **Key Strategy:** Filter and limit before lookup operations
 
 ---
 # 🔄 $lookup Alternatives at Scale
@@ -321,7 +325,7 @@ The optimizer is **cost-based** and **learned** - it remembers what works!
     const userIds = orders.map(o => o.userId);
     const users = await db.users.find({ _id: { $in: userIds } });
 
-**Performance Tip:** Sometimes avoiding $lookup entirely is the best solution
+- **Performance Tip:** Sometimes avoiding $lookup entirely is the best solution
 
 ---
 # ✏️ Update & Delete Optimization
@@ -353,7 +357,7 @@ The optimizer is **cost-based** and **learned** - it remembers what works!
 
     // Optimal index: { status: 1, lastLogin: 1 }
 
-**Key Point:** Delete operations scan first, then delete. Good indexes make the scan fast!
+- **Key Point:** Delete operations scan first, then delete. Good indexes make the scan fast!
 
 ---
 # 🔧 Mongoose-Specific Indexing
@@ -439,7 +443,7 @@ The optimizer is **cost-based** and **learned** - it remembers what works!
     // GOOD: Left-anchored regex can use index
     db.users.find({ email: { $regex: /^john/ } })
 
-**Key Point:** Regex operators (`.`, `*`, `+`) prevent index usage when unanchored
+- **Key Point:** Regex operators (`.`, `*`, `+`) prevent index usage when unanchored
 
 **See regex optimization deep dive for complete details**
 
@@ -455,7 +459,7 @@ The optimizer is **cost-based** and **learned** - it remembers what works!
     // GOOD: Use positive conditions instead
     db.users.find({ status: { $in: ["active", "pending"] } })
 
-**Why This Matters:** Negative queries examine most documents in your collection
+- **Why This Matters:** Negative queries examine most documents in your collection
 
 ---
 # 🚫 $lookup Scale Anti-Patterns
@@ -473,7 +477,7 @@ The optimizer is **cost-based** and **learned** - it remembers what works!
       { $lookup: { foreignField: "customerId" } }
     ])
 
-**Reality Check:** $lookup doesn't work like SQL JOINs at scale
+- **Reality Check:** $lookup doesn't work like SQL JOINs at scale
 
 ---
 # 🚨 Critical Index Anti-Patterns
@@ -491,7 +495,7 @@ The optimizer is **cost-based** and **learned** - it remembers what works!
     // Reality: Only price range can use index efficiently!
     // weight and rating become collection scans
 
-**Rule:** Only ONE range condition per query can use index efficiently
+- **Rule:** Only ONE range condition per query can use index efficiently
 
 ---
 # 💥 $in Array Size Anti-Patterns
@@ -607,7 +611,7 @@ The optimizer is **cost-based** and **learned** - it remembers what works!
     // Index: { userId: 1, type: 1, timestamp: 1 }
     // Finds specific users first, then filters
 
-**Selectivity Rule:** Most selective fields first, especially before ranges
+- **Selectivity Rule:** Most selective fields first, especially before ranges
 
 ---
 # 🔍 Regex Optimization Deep Dive
@@ -624,7 +628,7 @@ The optimizer is **cost-based** and **learned** - it remembers what works!
     db.users.find({ name: { $regex: /sm.*th/ } })      // . and * operators  
     db.users.find({ name: { $regex: /admin?/ } })      // ? operator
 
-**Key Insight:** MongoDB can sometimes optimize static text searches
+- **Key Insight:** MongoDB can sometimes optimize static text searches
 
 ---
 # ⚡ MongoDB's Smart Regex Optimizations
@@ -644,6 +648,7 @@ The optimizer is **cost-based** and **learned** - it remembers what works!
     /compan(y|ies)/  // Alternation - multiple patterns
 
 **Performance Impact:**
+
 - Static text: Can narrow index scan range
 - Regex operators: Always full collection scan (unless anchored)
 
@@ -712,7 +717,7 @@ The optimizer is **cost-based** and **learned** - it remembers what works!
     // Low selectivity (BAD) - finds many documents
     db.users.find({ status: "active" })               // 900K out of 1M
 
-**Rule:** More selective fields should come first in compound indexes
+- **Rule:** More selective fields should come first in compound indexes
 
 ---
 # 🛠️ Index Monitoring & Analysis
@@ -730,6 +735,7 @@ The optimizer is **cost-based** and **learned** - it remembers what works!
     });
 
 **Key Metrics:**
+
 - `totalDocsExamined` vs `totalDocsReturned` (lower ratio = better)
 - `executionTimeMillis` (lower = better)
 - `indexName` (should not be null)

@@ -12,10 +12,11 @@ A comprehensive collection of in-depth field guides covering MongoDB performance
 ## 🎯 Available Guides
 
 ### 📖 [MongoDB Indexing Field Guide](./mongodb-indexing-field-guide/)
-**Duration:** ~70-85 minutes (with Q&A)  
-**Format:** Comprehensive technical deep-dive with practical examples
+- **Duration:** ~70-85 minutes (with Q&A)  
+- **Format:** Comprehensive technical deep-dive with practical examples
 
 **Coverage:**
+
 - MongoDB query optimizer internals
 - ESR (Equality, Sort, Range) indexing pattern
 - Compound vs single field indexes
@@ -32,10 +33,11 @@ A comprehensive collection of in-depth field guides covering MongoDB performance
 - Performance monitoring and analysis
 
 ### 📊 [Aggregation Operators Performance Guide](./aggregation-operators-guide/)
-**Duration:** ~90-120 minutes (with Q&A)  
-**Format:** Complete operator-by-operator performance analysis with comprehensive coverage
+- **Duration:** ~90-120 minutes (with Q&A)  
+- **Format:** Complete operator-by-operator performance analysis with comprehensive coverage
 
 **Coverage:**
+
 - **40+ pipeline operators** with detailed performance analysis
 - **Complete operator categories:** $match, $project, $addFields, $replaceRoot, $lookup, $graphLookup, $unionWith, $group, $bucket, $facet, $setWindowFields, $geoNear, $search, $out, $merge, and more
 - **Memory management by operator type:** streaming vs blocking operations
@@ -211,6 +213,7 @@ git push origin main
 ```
 
 **Features:**
+
 - **Dynamic Index**: Automatically generates landing page with all available guides
 - **Smart Metadata**: Extracts duration and descriptions from guide READMEs
 - **Version Detection**: Shows only available HTML versions (base, speaker, published)
